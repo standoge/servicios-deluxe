@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 // Configure Handlebars
 app.engine('hbs', engine({
-	defaultLayout: 'main',
+	defaultLayout: 'main', //En este layout podria ponerse el header o algo asi
 	layoutsDir: path.join(__dirname, '../views/layouts'),
 	partialsDir: path.join(__dirname, '../views/partials'),
 	extname: '.hbs'
