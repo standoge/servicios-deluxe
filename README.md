@@ -7,6 +7,16 @@ npm run start  #si usas npm
 pnpm start     #si usas pnpm
 ```
 
+## Actulizar bd
+Actualizar los modelos de la base de datos a partir de los modelos existentes.
+
+```bash
+pnpm sequelize-auto -o "./src/models" -d railway -h host -u postgres -x pasword -p 39834 -e postgres # si usas npm reemplaza 'pnpm' por 'npx'
+```
+
+> [!NOTE]
+> Se debe de reemplazar los archivos de .js generados a .cjs para ser usados (revisar como se usa en init-models.cjs) 
+
 # Configuraciones por defecto
 
 - Vista default 'login.hbs'
