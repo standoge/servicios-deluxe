@@ -37,6 +37,7 @@ app.set('views', path.join(__dirname, '../views'));
 
 // JSON middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Endpoints use
 app.use('/', loginRoutes);
