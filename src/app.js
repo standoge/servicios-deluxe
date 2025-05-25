@@ -1,13 +1,15 @@
 // Load environment variables
 import 'dotenv/config';
 
+// Libraries
 import express from 'express';
 import { engine } from 'express-handlebars';
+import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Endpoints
-import loginRoutes from './modules/login/login.routes.js';
+import userRoutes from './modules/users/users.routes.js';
 import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 
 // Define __dirname for ES modules
@@ -35,12 +37,32 @@ app.engine('hbs', engine({
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, '../views'));
 
+// Session configuration
+app.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+		secure: false, 
+		maxAge: 24 * 60 * 60 * 1000 // 24 hrs
+	}
+}));
+
 // JSON middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Default route
+app.get('/', (req, res) => {
+	if (req.session.user) {
+		res.redirect('/inicio'); // Este endpoint no existe, pero deberia de ser la vista principal al entrar (Servicios)
+	} else {
+		res.redirect('usuarios/login');
+	}
+});
+
 // Endpoints use
-app.use('/', loginRoutes);
+app.use('/usuarios', userRoutes);
 app.use('/vehiculos', vehiculosRoutes);
 
 export default app;
