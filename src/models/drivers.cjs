@@ -15,11 +15,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATEONLY,
       allowNull: false
     },
-    driver_license: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      unique: "drivers_driver_license_key"
-    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
@@ -29,22 +24,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: "drivers_phone_key"
-    },
-    vehicle_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'vehicles',
-        key: 'vehicle_id'
-      }
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'users',
-        key: 'user_id'
-      }
     }
   }, {
     sequelize,
@@ -52,13 +31,6 @@ module.exports = function(sequelize, DataTypes) {
     schema: 'public',
     timestamps: false,
     indexes: [
-      {
-        name: "drivers_driver_license_key",
-        unique: true,
-        fields: [
-          { name: "driver_license" },
-        ]
-      },
       {
         name: "drivers_name_key",
         unique: true,

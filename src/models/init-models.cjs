@@ -1,16 +1,18 @@
 var DataTypes = require("sequelize").DataTypes;
 var _drivers = require("./drivers.cjs");
+var _users = require("./users.cjs");
+var _vehicles = require("./vehicles.cjs");
 
 function initModels(sequelize) {
   var drivers = _drivers(sequelize, DataTypes);
+  var users = _users(sequelize, DataTypes);
+  var vehicles = _vehicles(sequelize, DataTypes);
 
-  drivers.belongsTo(users, { as: "user", foreignKey: "user_id"});
-  users.hasMany(drivers, { as: "drivers", foreignKey: "user_id"});
-  drivers.belongsTo(vehicles, { as: "vehicle", foreignKey: "vehicle_id"});
-  vehicles.hasMany(drivers, { as: "drivers", foreignKey: "vehicle_id"});
 
   return {
     drivers,
+    users,
+    vehicles,
   };
 }
 module.exports = initModels;
