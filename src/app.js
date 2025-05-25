@@ -10,7 +10,8 @@ import { fileURLToPath } from 'url';
 
 // Endpoints
 import userRoutes from './modules/users/users.routes.js';
-import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
+import vehicleRoutes from './modules/vehicles/vehicles.routes.js';
+import driverRoutes from './modules/drivers/drivers.routes.js';
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -63,6 +64,7 @@ app.get('/', (req, res) => {
 
 // Endpoints use
 app.use('/usuarios', userRoutes);
-app.use('/vehiculos', vehiculosRoutes);
+app.use('/vehiculos', vehicleRoutes);
+app.use('/conductores', driverRoutes);
 
 export default app;
