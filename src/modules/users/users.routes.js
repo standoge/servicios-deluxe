@@ -33,10 +33,19 @@ router.post('/autenticar', async (req, res) => {
 			const isPasswordValid = await bcrypt.compare(password, user.password);
 
 			if (isPasswordValid) {
-				req.session.user = { username: user.username, id: user.user_id };
+				req.session.user = {
+					username: user.username,
+					id: user.user_id,
+					role_id: user.role_id
+				};
 
 				//Acá deben de hacerlo redireccionarse al home
-				res.json({ success: true, message: 'Bienvenido', userId: user.user_id });
+				res.json({
+					success: true,
+					message: 'Bienvenido',
+					userId: user.user_id,
+					roleId: user.role_id
+				});
 			} else {
 				res.status(401).json({ success: false, message: 'Usuario o contraseña inválida' });
 			}
