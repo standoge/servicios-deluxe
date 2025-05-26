@@ -1,8 +1,9 @@
+// Siempre colocar extensión .cjs para evitar problemas con importaciones en Node.js
 var DataTypes = require("sequelize").DataTypes;
-var _drivers = require("./drivers");
-var _roles = require("./roles");
-var _users = require("./users");
-var _vehicles = require("./vehicles");
+var _drivers = require("./drivers.cjs");
+var _roles = require("./roles.cjs");
+var _users = require("./users.cjs");
+var _vehicles = require("./vehicles.cjs");
 
 function initModels(sequelize) {
   var drivers = _drivers(sequelize, DataTypes);

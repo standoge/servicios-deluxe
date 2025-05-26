@@ -11,9 +11,9 @@ const router = Router();
 
 // CREATE 
 router.post('/', async (req, res) => {
-  const { name, birthdate, driver_license, phone } = req.body;
+  const { name, birthdate, driver_id, phone } = req.body;
 
-  if (!name || !birthdate || !driver_license || !phone) {
+  if (!name || !birthdate || !driver_id || !phone) {
     return res.status(400).json({
       success: false,
       message: 'El nombre, fecha de nacimiento, licencia de conducir y teléfono son obligatorios'
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
     }
 
     const newDriver = await Driver.create({
-      driver_id: driver_license, // driver_id = driver_license
+      driver_id: driver_id, // driver_id = driver_license
       name,
       birthdate,
       phone,
