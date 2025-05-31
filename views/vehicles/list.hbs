@@ -1,1 +1,35 @@
-Esta es la lista de vehiculos
+<div class="container">
+    <h1>Vehículos</h1>
+    <a href="/vehiculos/form/add" class="btn btn-success">Agregar Vehículo</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>Color</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each vehiculos}}
+            <tr>
+                <td>{{this.placa}}</td>
+                <td>{{this.marca}}</td>
+                <td>{{this.modelo}}</td>
+                <td>{{this.anio}}</td>
+                <td>{{this.color}}</td>
+                <td>{{this.tipo_vehiculo}}</td>
+                <td>{{this.estado}}</td>
+                <td>
+                    <a href="/vehiculos/form/{{this.id_vehiculo}}" class="btn btn-primary">Editar</a>
+                    <!-- Aquí puedes agregar botón de eliminar si lo deseas -->
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
