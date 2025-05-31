@@ -39,7 +39,11 @@ app.engine('hbs', engine({
 	layoutsDir: path.join(__dirname, '../views/layouts'),
 	partialsDir: path.join(__dirname, '../views/partials'),
 	extname: '.hbs',
-	helpers: registerHandlebarsHelpers()
+	helpers: registerHandlebarsHelpers(),
+	runtimeOptions: {
+		allowProtoMethodsByDefault: true,
+		allowProtoPropertiesByDefault: true
+	}
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, '../views'));
