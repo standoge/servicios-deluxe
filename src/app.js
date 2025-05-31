@@ -11,6 +11,7 @@ import methodOverride from 'method-override';
 import loginRoutes from './modules/login/login.routes.js';
 import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 import serviciosRoutes from './modules/services/services.routes.js';
+import usersRoutes from './modules/users/users.routes.js';
 import {registerHandlebarsHelpers} from './modules/services/services.controller.js'
 
 
@@ -54,9 +55,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Endpoints use
 app.use('/', loginRoutes);
+app.use('/usuarios', usersRoutes);
 app.use('/vehiculos', vehiculosRoutes);
 app.use('/servicios', serviciosRoutes);
 // app.use(methodOverride('_method'));
+
+app.get('/panelhome', (req, res) => {
+    res.render('panelhome', { title: 'Panel de Bienvenida' });
+});
 
 
 export default app;

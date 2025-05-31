@@ -17,45 +17,51 @@ router.get('/login', (req, res) => {
 
 // AUTH
 router.post('/autenticar', async (req, res) => {
-	const { username, password } = req.body;
+    const { username, password } = req.body;
 
-	try {
-		// Verificar que es usuario activo
-		const user = await User.findOne({
-			where: {
-				username: username,
-				active: true
-			}
-		});
+    try {
+        // Verificar que es usuario activo
+        const user = await User.findOne({
+            where: {
+                username: username,
+                active: true
+            }
+        });
 
-		if (user) {
-			//Verificar contraseña encriptada
-			const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (user) {
+            //Verificar contraseña encriptada
+            const isPasswordValid = await bcrypt.compare(password, user.password);
 
-			if (isPasswordValid) {
-				req.session.user = {
-					username: user.username,
-					id: user.user_id,
-					role_id: user.role_id
-				};
-
-				//Acá deben de hacerlo redireccionarse al home
-				res.json({
-					success: true,
-					message: 'Bienvenido',
-					userId: user.user_id,
-					roleId: user.role_id
-				});
-			} else {
-				res.status(401).json({ success: false, message: 'Usuario o contraseña inválida' });
-			}
-		} else {
-			res.status(401).json({ success: false, message: 'Usuario o contraseña inválida' });
-		}
-	} catch (error) {
-		console.error('No fue posible realizar la autenticación:', error);
-		res.status(500).json({ success: false, message: 'Error en servidor' });
-	}
+            if (isPasswordValid) {
+                // req.session.user = {
+                //     username: user.username,
+                //     id: user.user_id,
+                //     role_id: user.role_id
+                // };
+                // Redirigir al panel de bienvenida
+                return res.redirect('/panelhome');
+            } else {
+                return res.status(401).render('login/login', { 
+                    title: 'Login', 
+                    layout: false, 
+                    error: 'Usuario o contraseña inválida' 
+                });
+            }
+        } else {
+            return res.status(401).render('login/login', { 
+                title: 'Login', 
+                layout: false, 
+                error: 'Usuario o contraseña inválida' 
+            });
+        }
+    } catch (error) {
+        console.error('No fue posible realizar la autenticación:', error);
+        return res.status(500).render('login/login', { 
+            title: 'Login', 
+            layout: false, 
+            error: 'Error en servidor' 
+        });
+    }
 });
 
 // CREATE 
@@ -88,15 +94,8 @@ router.post('/', async (req, res) => {
 			active: true
 		});
 
-		res.status(201).json({
-			success: true,
-			message: 'Usuario creado éxitosamente',
-			user: {
-				user_id: newUser.user_id,
-				username: newUser.username,
-				active: newUser.active
-			}
-		});
+		// Redireccionar si es con éxito
+		return res.redirect('/panelhome');
 	} catch (error) {
 		console.error('El usuario no pudo ser creado:', error);
 		res.status(500).json({
@@ -155,15 +154,6 @@ router.put('/:id', async (req, res) => {
 
 		await user.update(updateData);
 
-		res.json({
-			success: true,
-			message: 'Usuario actualizado',
-			user: {
-				user_id: user.user_id,
-				username: user.username,
-				active: user.active
-			}
-		});
 	} catch (error) {
 		console.error('Error al actualizar el usuario:', error);
 		res.status(500).json({
