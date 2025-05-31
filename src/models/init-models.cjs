@@ -1,22 +1,20 @@
 // Siempre colocar extensión .cjs para evitar problemas con importaciones en Node.js
 var DataTypes = require("sequelize").DataTypes;
-var _drivers = require("./drivers.cjs");
-var _roles = require("./roles.cjs");
+var _services = require("./services.cjs");
 var _users = require("./users.cjs");
 var _vehicles = require("./vehicles.cjs");
 
 function initModels(sequelize) {
-  var drivers = _drivers(sequelize, DataTypes);
-  var roles = _roles(sequelize, DataTypes);
+  var services = _services(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
   var vehicles = _vehicles(sequelize, DataTypes);
 
-  users.belongsTo(roles, { as: "role", foreignKey: "role_id"});
-  roles.hasMany(users, { as: "users", foreignKey: "role_id"});
+  services.belongsTo(vehicles, { as: "vehicle", foreignKey: "vehicle_id"});
+  vehicles.hasMany(services, { as: "services", foreignKey: "vehicle_id"});
+
 
   return {
-    drivers,
-    roles,
+    services,
     users,
     vehicles,
   };

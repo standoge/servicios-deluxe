@@ -5,6 +5,22 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
+    },
+    marca: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    modelo: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    anio: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    placa: {
+      type: DataTypes.STRING(20),
+      allowNull: false
     }
   }, {
     sequelize,
