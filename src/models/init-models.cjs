@@ -1,8 +1,10 @@
 var DataTypes = require("sequelize").DataTypes;
+var _services = require("./services.cjs");
 var _users = require("./users.cjs");
 var _vehicles = require("./vehicles.cjs");
 
 function initModels(sequelize) {
+  var services = _services(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
   var vehicles = _vehicles(sequelize, DataTypes);
 

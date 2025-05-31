@@ -4,7 +4,8 @@ import {
   createVehicle,
   getAllVehicles,
   updateVehicle,
-  deleteVehicle
+  deleteVehicle,
+  getVehicleById
 } from './vehicles.service.js';
 
 //Controlador para listar vehículos
@@ -50,8 +51,7 @@ const crearVehiculo = async (req, res) => {
 const actualizarVehiculo = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
-
-        const indice = vehicles.findIndex((vehiculo) => vehiculo.vehicle_id === id);
+        const indice = await getVehicleById(id);
         if(indice !== -1){
             await updateVehicle(id, req.body);
         };
@@ -72,7 +72,7 @@ const eliminarVehiculo = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
 
-        const indice = vehicles.findIndex((vehiculo) => vehiculo.vehicle_id === id);
+        const indice = await getVehicleById(id);
 
         if(indice !== -1){
             await deleteVehicle(id);
