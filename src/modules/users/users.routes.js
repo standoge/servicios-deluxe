@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { Router } from 'express';
 import { createRequire } from 'module';
 import sequelize from '../../config/sequelize.js';
+import { requireAuth } from '../../middleware/auth.js';
 const require = createRequire(import.meta.url);
 const initModelsFunction = require('../../models/init-models.cjs');
 
@@ -33,11 +34,11 @@ router.post('/autenticar', async (req, res) => {
             const isPasswordValid = await bcrypt.compare(password, user.password);
 
             if (isPasswordValid) {
-                // req.session.user = {
-                //     username: user.username,
-                //     id: user.user_id,
-                //     role_id: user.role_id
-                // };
+                req.session.user = {
+                    username: user.username,
+                    id: user.user_id,
+                    role_id: user.role_id
+                };
                 // Redirigir al panel de bienvenida
                 return res.redirect('/panelhome');
             } else {
@@ -106,7 +107,7 @@ router.post('/', async (req, res) => {
 });
 
 // UPDATE 
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAuth ,async (req, res) => {
 	const { id } = req.params;
 	const { username, password } = req.body;
 
@@ -164,7 +165,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',requireAuth ,async (req, res) => {
 	const { id } = req.params;
 
 	try {

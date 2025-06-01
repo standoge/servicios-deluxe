@@ -29,4 +29,11 @@ const authenticateUser = (User) => async (req, res) => {
     }
 };
 
-export { renderLogin, renderRegister, authenticateUser };
+// Nuevo controlador para logout
+const logout = (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+};
+
+export { renderLogin, renderRegister, authenticateUser,logout };

@@ -7,11 +7,14 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         border-radius: 8px;
         overflow: hidden;
+        margin-left: auto;
+        margin-right: auto;
     }
     .vehiculos-table th, .vehiculos-table td {
         padding: 0.75rem 1rem;
-        text-align: left;
+        text-align: center;
         border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
     }
     .vehiculos-table th {
         background: #f8f9fa;
@@ -32,6 +35,9 @@
         font-size: 0.95rem;
         cursor: pointer;
         transition: background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
     }
     .btn-success {
         background: #28a745;
@@ -41,12 +47,28 @@
     .btn-primary {
         background: #007bff;
     }
+    .btn-warning {
+        background: #ffc107;
+        color: #343a40;
+    }
+    .btn-danger {
+        background: #dc3545;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
 </style>
 {{> navbar }}
 <div class="container">
     <h1>Vehículos</h1>
-    <a href="/vehiculos/reporte" class="btn btn-warning" style="margin-bottom: 1rem; margin-right: 1rem;">Reportes</a>
-    <a href="/vehiculos/form/add" class="btn btn-success">Agregar Vehículo</a>
+    <a href="/vehiculos/reporte" class="btn btn-warning" style="margin-bottom: 1rem; margin-right: 1rem;">
+        <span aria-hidden="true">&#128202;</span> Reportes
+    </a>
+    <a href="/vehiculos/form/add" class="btn btn-success">
+        <span aria-hidden="true">&#43;</span> Agregar Vehículo
+    </a>
     <table class="vehiculos-table">
         <thead>
             <tr>
@@ -71,9 +93,13 @@
                 <td>{{this.tipo_vehiculo}}</td>
                 <td>{{this.estado}}</td>
                 <td>
-                    <a href="/vehiculos/form/{{this.vehicle_id}}" class="btn btn-primary">Editar</a>
+                    <a href="/vehiculos/form/{{this.vehicle_id}}" class="btn btn-primary" title="Editar">
+                        <span aria-hidden="true">&#9998;</span> Editar
+                    </a>
                     <form action="/vehiculos/{{this.vehicle_id}}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vehículo?');" style="background:#dc3545; margin-left:4px;">Eliminar</button>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vehículo?');" title="Eliminar">
+                            <span aria-hidden="true">&#128465;</span> Eliminar
+                        </button>
                         <input type="hidden" name="_method" value="DELETE">
                     </form>
                 </td>

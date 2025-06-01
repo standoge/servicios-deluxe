@@ -6,6 +6,7 @@ import { engine } from 'express-handlebars';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import methodOverride from 'method-override';
+import session from 'express-session';
 
 // Endpoints
 import loginRoutes from './modules/login/login.routes.js';
@@ -13,8 +14,7 @@ import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 import serviciosRoutes from './modules/services/services.routes.js';
 import usersRoutes from './modules/users/users.routes.js';
 import {registerHandlebarsHelpers} from './modules/services/services.controller.js'
-
-
+import { requireAuth } from './middleware/auth.js'; // Asegúrate de tener este archivo
 
 
 // Define __dirname for ES modules
@@ -53,16 +53,25 @@ app.set('views', path.join(__dirname, '../views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Session middleware
+app.use(session({
+    secret: 'tu_clave_secreta', // cámbiala por una clave segura
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } // Usa true solo si usas HTTPS
+}));
+
 // Endpoints use
 app.use('/', loginRoutes);
 app.use('/usuarios', usersRoutes);
-app.use('/vehiculos', vehiculosRoutes);
-app.use('/servicios', serviciosRoutes);
-// app.use(methodOverride('_method'));
 
-app.get('/panelhome', (req, res) => {
+// Protege todas las rutas de vehículos y servicios
+app.use('/vehiculos', requireAuth, vehiculosRoutes);
+app.use('/servicios', requireAuth, serviciosRoutes);
+
+// Protege el panel de bienvenida
+app.get('/panelhome', requireAuth, (req, res) => {
     res.render('panelhome', { title: 'Panel de Bienvenida' });
 });
-
 
 export default app;

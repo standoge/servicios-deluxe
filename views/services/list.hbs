@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/services/list/list.css">
 </head>
 <body>
+    {{> navbar }}
+
     <div class="container">
         <div class="header">
             <h1>🚗 Servicios de Mantenimiento</h1>
@@ -15,19 +17,19 @@
 
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-number" id="totalServicios">{{estadisticas.totalServicios}}</div>
+                <div class="stat-number">{{estadisticas.totalServicios}}</div>
                 <div class="stat-label">Total Servicios</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="serviciosMes">{{estadisticas.serviciosMes}}</div>
+                <div class="stat-number">{{estadisticas.serviciosMes}}</div>
                 <div class="stat-label">Este Mes</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="costoTotal">${{estadisticas.costoTotal}}</div>
+                <div class="stat-number">${{estadisticas.costoTotal}}</div>
                 <div class="stat-label">Costo Total</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="vehiculosActivos">{{estadisticas.vehiculosActivos}}</div>
+                <div class="stat-number">{{estadisticas.vehiculosActivos}}</div>
                 <div class="stat-label">Vehículos Activos</div>
             </div>
         </div>
