@@ -6,6 +6,13 @@ import {
     deleteService,
     getServiceById
 } from './services.service.js';
+import sequelize from '../../config/sequelize.js';
+import initModels from '../../models/init-models.cjs'; // <-- Importación correcta
+
+const models = initModels(sequelize);
+
+const Servicio = models.services;
+const Vehiculo = models.vehicles;
 
 // Helper para registrar un helper de Handlebars
 const registerHandlebarsHelpers = () => ({
@@ -77,13 +84,14 @@ const listarServicios = async (req, res) => {
 
         // Aplicar filtro de vehículo si existe
         if (vehiculoFiltro) {
-            servicios = servicios.filter(s => s.vehicle.placa === vehiculoFiltro);
+            servicios = servicios.filter(s => s.vehiculos && s.vehiculos.placa === vehiculoFiltro);
         }
 
         // Obtener vehículos únicos para el filtro
-        const vehiculosUnicos = [...new Set(servicios.map(s => s.vehicle.placa))]
+        const vehiculosUnicos = [...new Set(servicios.map(s => s.vehiculos?.placa))]
+            .filter(Boolean)
             .map(placa => {
-                const vehiculo = servicios.find(s => s.vehicle.placa === placa).vehicle.toJSON();
+                const vehiculo = servicios.find(s => s.vehiculos && s.vehiculos.placa === placa)?.vehiculos?.toJSON?.() || {};
                 return {
                     ...vehiculo,
                     selected: placa === vehiculoFiltro
@@ -100,7 +108,7 @@ const listarServicios = async (req, res) => {
             totalServicios: servicios.length,
             serviciosMes: serviciosMes.length,
             costoTotal: serviciosMes.reduce((total, s) => total + s.costo, 0).toLocaleString(),
-            vehiculosActivos: new Set(servicios.map(s => s.vehicle.placa)).size
+            vehiculosActivos: new Set(servicios.map(s => s.vehiculos?.placa).filter(Boolean)).size
         };
 
         // Generar calendario
@@ -279,7 +287,7 @@ const obtenerServiciosAPI = async (req, res) => {
         const servicios = await getAllServices();
 
         if (vehiculoFiltro) {
-            servicios = servicios.filter(s => s.vehicle.placa === vehiculoFiltro);
+            servicios = servicios.filter(s => s.vehiculos && s.vehiculos.placa === vehiculoFiltro);
         }
 
         const serviciosMes = servicios.filter(servicio => {
@@ -293,7 +301,7 @@ const obtenerServiciosAPI = async (req, res) => {
                 totalServicios: servicios.length,
                 serviciosMes: serviciosMes.length,
                 costoTotal: serviciosMes.reduce((total, s) => total + s.costo, 0),
-                vehiculosActivos: new Set(servicios.map(s => s.vehicle.placa)).size
+                vehiculosActivos: new Set(servicios.map(s => s.vehiculos?.placa).filter(Boolean)).size
             }
         });
 

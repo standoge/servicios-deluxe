@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('vehiculos', {
-    id_vehiculo: {
+    vehicle_id: { // Cambiado de id_vehiculo a vehicle_id
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -117,7 +117,7 @@ module.exports = function(sequelize, DataTypes) {
         name: "vehiculos_pkey",
         unique: true,
         fields: [
-          { name: "id_vehiculo" },
+          { name: "vehicle_id" }, // Cambiado aquí también
         ]
       },
       {

@@ -71,8 +71,8 @@
                 <td>{{this.tipo_vehiculo}}</td>
                 <td>{{this.estado}}</td>
                 <td>
-                    <a href="/vehiculos/form/{{this.id_vehiculo}}" class="btn btn-primary">Editar</a>
-                    <form action="/vehiculos/{{this.id_vehiculo}}" method="POST" style="display:inline;">
+                    <a href="/vehiculos/form/{{this.vehicle_id}}" class="btn btn-primary">Editar</a>
+                    <form action="/vehiculos/{{this.vehicle_id}}" method="POST" style="display:inline;">
                         <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vehículo?');" style="background:#dc3545; margin-left:4px;">Eliminar</button>
                         <input type="hidden" name="_method" value="DELETE">
                     </form>

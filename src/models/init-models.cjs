@@ -2,14 +2,14 @@
 var DataTypes = require("sequelize").DataTypes;
 var _services = require("./services.cjs");
 var _users = require("./users.cjs");
-var _vehicles = require("./vehicles.cjs");
+var _vehicles = require("./vehiculos.cjs");
 
 function initModels(sequelize) {
   var services = _services(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
   var vehicles = _vehicles(sequelize, DataTypes);
 
-  services.belongsTo(vehicles, { as: "vehicle", foreignKey: "vehicle_id"});
+  services.belongsTo(vehicles, { as: "vehiculos", foreignKey: "vehicle_id"});
   vehicles.hasMany(services, { as: "services", foreignKey: "vehicle_id"});
 
 
