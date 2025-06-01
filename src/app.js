@@ -13,6 +13,7 @@ import clientesRoutes from './modules/customers/customers.routes.js';
 import loginRoutes from './modules/login/login.routes.js';
 import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 import serviciosRoutes from './modules/services/services.routes.js';
+// import mantenimientoRoutes from './modules/mantenimiento/mantenimiento.routes.js';
 import usersRoutes from './modules/users/users.routes.js';
 import {registerHandlebarsHelpers} from './modules/services/services.controller.js'
 import { requireAuth } from './middleware/auth.js'; // Asegúrate de tener este archivo
@@ -69,7 +70,8 @@ app.use('/usuarios', usersRoutes);
 // Protege todas las rutas de vehículos y servicios
 app.use('/clientes', requireAuth, clientesRoutes);
 app.use('/vehiculos', requireAuth, vehiculosRoutes);
-app.use('/servicios', requireAuth, serviciosRoutes);
+// app.use('/servicios', requireAuth, mantenimientoRoutes);
+app.use('/viajes',serviciosRoutes);
 
 // Protege el panel de bienvenida
 app.get('/panelhome', requireAuth, (req, res) => {

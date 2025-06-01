@@ -8,7 +8,6 @@ import {
 } from './services.service.js';
 import sequelize from '../../config/sequelize.js';
 import initModels from '../../models/init-models.cjs'; // <-- Importación correcta
-import { getAllVehicles } from '../vehicles/vehicles.service.js'; // Importa el servicio de vehículos
 
 const models = initModels(sequelize);
 
@@ -84,7 +83,7 @@ const listarServicios = async (req, res) => {
         const anioActual = parseInt(req.query.anio) || new Date().getFullYear();
         const vehiculoFiltro = req.query.vehiculo || '';
 
-        let servicios = await getAllServices();
+        const servicios = await getAllServices();
 
         // Aplicar filtro de vehículo si existe
         if (vehiculoFiltro) {
@@ -155,14 +154,32 @@ const listarServicios = async (req, res) => {
 };
 
 // Controlador para mostrar formulario de nuevo servicio
-const mostrarFormularioViaje = async (req, res) => {
+const mostrarFormularioNuevo = (req, res) => {
     try {
-        const vehiculos = await getAllVehicles(); // Obtén todos los vehículos
-        const viaje = req.params.id ? await getViajeById(req.params.id) : null; // Si hay un ID, busca el viaje
-        res.render('viaje/form', { viaje, vehiculos }); // Pasa los vehículos y el viaje a la vista
+        const datosVista = {
+            titulo: 'Nuevo Servicio',
+            accion: '/servicios',
+            metodo: 'POST',
+            servicio: {
+                vehiculo: {},
+                tipoServicio: '',
+                fechaServicio: '',
+                horaServicio: '',
+                duracionEstimada: '',
+                costo: 0,
+                estado: 'programado',
+                descripcion: '',
+                mecanico: '',
+                observaciones: ''
+            }
+        };
+
+        res.render('services/form', datosVista);
+
     } catch (error) {
+        console.error('Error al mostrar formulario:', error);
         res.status(500).render('error', {
-            message: "Error al cargar el formulario de viaje",
+            message: 'Error al cargar el formulario',
             error: error
         });
     }
@@ -204,28 +221,16 @@ const crearServicio = async (req, res) => {
     try {
         const nuevoServicio = {
             ...req.body,
-            vehicle_id: parseInt(req.body.vehicle_id),
+            id: Date.now(), // En producción se genera automáticamente
             costo: parseFloat(req.body.costo)
         };
 
         await createService(nuevoServicio);
 
-        // Si la petición es AJAX (fetch), responde con JSON
-        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
-            return res.status(200).json({ success: true, message: 'Servicio guardado exitosamente' });
-        }
-
-        // Si es un form tradicional, redirige
         res.redirect('/servicios/list?success=created');
 
     } catch (error) {
         console.error('Error al crear servicio:', error);
-
-        // Si la petición es AJAX (fetch), responde con JSON de error
-        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
-            return res.status(400).json({ success: false, message: error.message || 'Error al crear el servicio' });
-        }
-
         res.status(500).render('error', {
             message: 'Error al crear el servicio',
             error: error
@@ -282,7 +287,7 @@ const obtenerServiciosAPI = async (req, res) => {
         const anioActual = parseInt(req.query.anio) || new Date().getFullYear();
         const vehiculoFiltro = req.query.vehiculo || '';
 
-        let servicios = await getAllServices();
+        const servicios = await getAllServices();
 
         if (vehiculoFiltro) {
             servicios = servicios.filter(s => s.vehiculos && s.vehiculos.placa === vehiculoFiltro);
@@ -311,7 +316,7 @@ const obtenerServiciosAPI = async (req, res) => {
 
 export {
     listarServicios,
-    mostrarFormularioViaje,
+    mostrarFormularioNuevo,
     mostrarFormularioEdicion,
     crearServicio,
     actualizarServicio,
