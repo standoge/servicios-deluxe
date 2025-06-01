@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Sistema de gestión de servicios y equipo como trabajo final de la asignatura de SGI.",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

@@ -1,1 +1,136 @@
-Esta es la lista de clientes
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Listado de Clientes</title>
+    <link rel="stylesheet" href="/clientes/list/list.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧍 Clientes Registrados</h1>
+            <p>Gestión de usuarios del servicio de viajes</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalClientes">{{estadisticas.totalClientes}}</div>
+                <div class="stat-label">Total Clientes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activos">{{estadisticas.activos}}</div>
+                <div class="stat-label">Activos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="inactivos">{{estadisticas.inactivos}}</div>
+                <div class="stat-label">Inactivos</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="filter-group">
+                <label for="estadoFilter">Filtrar por Estado:</label>
+                <select id="estadoFilter">
+                    <option value="">Todos</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <a href="http://localhost:3000/clientes/nuevo/" class="btn btn-success" target="_blank" rel="noopener noreferrer">
+                    ➕ Nuevo Cliente
+                </a>
+            </div>
+        </div>
+
+        <div class="listado-clientes">
+            <table id="clientesTable" class="table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Nombre <span>▲▼</span></th>
+                        <th onclick="sortTable(1)">Apellido <span>▲▼</span></th>
+                        <th onclick="sortTable(2)">DUI <span>▲▼</span></th>
+                        <th onclick="sortTable(3)">Teléfono <span>▲▼</span></th>
+                        <th onclick="sortTable(4)">Estado <span>▲▼</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each clientes}}
+                    <tr onclick="verCliente({{this.id}})" style="cursor:pointer;">
+                        <td>{{this.nombre}}</td>
+                        <td>{{this.apellido}}</td>
+                        <td>{{this.dui}}</td>
+                        <td>{{this.telefono}}</td>
+                        <td>{{this.estado}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script id="clientesData" type="application/json">
+        {{{clientesJSON}}}
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function sortTable(columnIndex) {
+                const table = document.getElementById("clientesTable");
+                let switching = true;
+                let dir = "asc";
+                let switchcount = 0;
+
+                while (switching) {
+                    switching = false;
+                    const rows = table.rows;
+
+                    for (let i = 1; i < (rows.length - 1); i++) {
+                        let shouldSwitch = false;
+                        const x = rows[i].getElementsByTagName("TD")[columnIndex];
+                        const y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+                        const xContent = x.textContent.toLowerCase();
+                        const yContent = y.textContent.toLowerCase();
+
+                        if ((dir === "asc" && xContent > yContent) ||
+                            (dir === "desc" && xContent < yContent)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                        switchcount++;
+                    } else if (switchcount === 0 && dir === "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+
+            function verCliente(id) {
+                window.location.href = `/clientes/form/edit/${id}`;
+            }
+
+            document.getElementById('estadoFilter').addEventListener('change', function () {
+                const filterValue = this.value.toLowerCase();
+                const table = document.getElementById('clientesTable');
+                const trs = table.tBodies[0].rows;
+
+                for (let row of trs) {
+                    const estado = row.cells[4].textContent.toLowerCase();
+                    row.style.display = (filterValue === '' || estado === filterValue) ? '' : 'none';
+                }
+            });
+
+            window.sortTable = sortTable;
+            window.verCliente = verCliente;
+        });
+    </script>
+
+    <script src="/clientes/list/list.js"></script>
+</body>
+</html>

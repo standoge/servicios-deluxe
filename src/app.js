@@ -12,6 +12,8 @@ import loginRoutes from './modules/login/login.routes.js';
 import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 import serviciosRoutes from './modules/services/services.routes.js';
 import {registerHandlebarsHelpers} from './modules/services/services.controller.js'
+import conductoresRoutes from './modules/drivers/drivers.routes.js';
+import clientesRoutes from './modules/customers/customers.routes.js';
 
 
 
@@ -19,6 +21,9 @@ import {registerHandlebarsHelpers} from './modules/services/services.controller.
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
+
 
 const app = express();
 
@@ -52,7 +57,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', loginRoutes);
 app.use('/vehiculos', vehiculosRoutes);
 app.use('/servicios', serviciosRoutes);
+app.use('/conductores', conductoresRoutes);
+app.use('/clientes', clientesRoutes);
+
 // app.use(methodOverride('_method'));
+
 
 
 export default app;
