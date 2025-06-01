@@ -5,5 +5,5 @@ export function requireAuth(req, res, next) {
     // Si quieres, puedes guardar la ruta original para redirigir después del login
     console.log('PROTECT ROUTE!!!');
     req.session.redirectTo = req.originalUrl;
-    res.redirect('/usuarios/login');
+    res.redirect('/');
 }

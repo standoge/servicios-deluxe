@@ -34,18 +34,16 @@
                     <a href="/vehiculos/form/{{this.vehicle_id}}" class="btn btn-primary" title="Editar">
                         <span aria-hidden="true">&#9998;</span> Editar
                     </a>
-                    <form action="/vehiculos/{{this.vehicle_id}}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vehículo?');" title="Eliminar">
-                            <span aria-hidden="true">&#128465;</span> Eliminar
-                        </button>
-                        <input type="hidden" name="_method" value="DELETE">
-                    </form>
+                    <button type="button" class="btn btn-danger btn-eliminar-vehiculo" data-id="{{this.vehicle_id}}" title="Eliminar">
+                        <span aria-hidden="true">&#128465;</span> Eliminar
+                    </button>
                 </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
+<script src="/js/vehiculosService.js"></script>
 
 <style>
     .vehiculos-table {

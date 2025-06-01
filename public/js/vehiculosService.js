@@ -3,6 +3,33 @@ document.addEventListener("DOMContentLoaded", function() {
     if (form) {
         form.addEventListener('submit', handleVehicleSubmit);
     }
+
+    // Manejo de eliminación por fetch
+    document.querySelectorAll('.btn-eliminar-vehiculo').forEach(btn => {
+        console.log('Botón de eliminación encontrado:', btn);
+        btn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            console.log('Eliminación manejada por archivo externo [DEV]');
+            const id = this.dataset.id;
+            if (!id) return;
+            if (!confirm('¿Seguro que deseas eliminar este vehículo?')) return;
+
+            try {
+                const res = await fetch(`/vehiculos/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (res.ok) {
+                    alert('Vehículo eliminado correctamente');
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar el vehículo');
+                }
+            } catch (err) {
+                alert('Error de red al eliminar el vehículo');
+            }
+        });
+    });
 });
 
 async function handleVehicleSubmit(e) {

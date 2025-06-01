@@ -1,11 +1,11 @@
 import { getUserByUsername } from './login.service.js';
 
 const renderLogin = (req, res) => {
-    res.render('login/login', { title: 'Login', layout: false });
+    res.render('login/login', { title: 'Login' });
 };
 
 const renderRegister = (req, res) => {
-    res.render('login/register', { title: 'Crear Cuenta', layout: false });
+    res.render('login/register', { title: 'Crear Cuenta' });
 };
 
 const authenticateUser = (User) => async (req, res) => {

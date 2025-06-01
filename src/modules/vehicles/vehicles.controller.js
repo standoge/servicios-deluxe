@@ -83,17 +83,19 @@ const eliminarVehiculo = async (req, res) => {
 
         const indice = await getVehicleById(id);
 
-        if(indice !== -1){
+        if (indice !== -1) {
             await deleteVehicle(id);
-        };
-
-        res.redirect('/vehiculos/list?success=deleted');
-
+            // Respuesta JSON para fetch/AJAX
+            return res.status(200).json({ success: true, message: "Vehículo eliminado correctamente" });
+        } else {
+            return res.status(404).json({ success: false, message: "Vehículo no encontrado" });
+        }
     } catch (error) {
-        console.log('Error al eliminar vehículo',error);
-        res.status(500).render('error', { 
+        console.log('Error al eliminar vehículo', error);
+        return res.status(500).json({
+            success: false,
             message: "Error al eliminar vehículo",
-            error: error
+            error: error.message || error
         });
     }
 }
