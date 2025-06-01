@@ -1,3 +1,4 @@
+
 // customers.routes.js
 
 import express from 'express';
@@ -9,9 +10,11 @@ import {
     formularioClienteNuevo,
     formularioClienteEdicion,
     generarReporte
+
 } from './customers.controller.js';
 
 const router = express.Router();
+
 
 // Rutas para la interfaz web
 router.get('/list', listarClientes);
@@ -25,3 +28,4 @@ router.post('/:id', actualizarCliente);
 router.delete('/:id', eliminarCliente);
 
 export default router;
+

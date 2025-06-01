@@ -16,12 +16,14 @@ import serviciosRoutes from './modules/services/services.routes.js';
 // import mantenimientoRoutes from './modules/mantenimiento/mantenimiento.routes.js';
 import usersRoutes from './modules/users/users.routes.js';
 import {registerHandlebarsHelpers} from './modules/services/services.controller.js'
-import { requireAuth } from './middleware/auth.js'; // Asegúrate de tener este archivo
 
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
+
 
 const app = express();
 
@@ -65,7 +67,6 @@ app.use(session({
 
 // Endpoints use
 app.use('/', loginRoutes);
-app.use('/usuarios', usersRoutes);
 
 // Protege todas las rutas de vehículos y servicios
 app.use('/clientes', requireAuth, clientesRoutes);
@@ -77,5 +78,6 @@ app.use('/viajes',serviciosRoutes);
 app.get('/panelhome', requireAuth, (req, res) => {
     res.render('panelhome', { title: 'Panel de Bienvenida' });
 });
+
 
 export default app;

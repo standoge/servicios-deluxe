@@ -1,1 +1,158 @@
-Esta es la lista de conductores
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Listado de Conductores</title>
+    <link rel="stylesheet" href="/conductores/list/list.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧑‍✈️ Conductores Registrados</h1>
+            <p>Gestión de personal conductor</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalConductores">{{estadisticas.totalConductores}}</div>
+                <div class="stat-label">Total Conductores</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activos">{{estadisticas.activos}}</div>
+                <div class="stat-label">Activos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="inactivos">{{estadisticas.inactivos}}</div>
+                <div class="stat-label">Inactivos</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="filter-group">
+                <label for="estadoFilter">Filtrar por Estado:</label>
+                <select id="estadoFilter">
+                    <option value="">Todos</option>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <a href="http://localhost:3000/conductores/nuevo/" class="btn btn-success" target="_blank" rel="noopener noreferrer">
+    ➕ Nuevo Conductor
+</a>
+
+            </div>
+        </div>
+
+        <div class="listado-conductores">
+            <table id="conductoresTable" class="table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Nombre <span>▲▼</span></th>
+                        <th onclick="sortTable(1)">Apellido <span>▲▼</span></th>
+                        <th onclick="sortTable(2)">DUI <span>▲▼</span></th>
+                        <th onclick="sortTable(3)">Licencia <span>▲▼</span></th>
+                        <th onclick="sortTable(4)">Estado <span>▲▼</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each conductores}}
+                    <tr onclick="verConductor({{this.id}})" style="cursor:pointer;">
+                        <td>{{this.nombre}}</td>
+                        <td>{{this.apellido}}</td>
+                        <td>{{this.dui}}</td>
+                        <td>{{this.licencia}}</td>
+                        <td>{{this.estado}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Datos JSON para interacción JS -->
+    <script id="conductoresData" type="application/json">
+        {{{conductoresJSON}}}
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Función para ordenar tabla
+            function sortTable(columnIndex) {
+                const table = document.getElementById("conductoresTable");
+                let switching = true;
+                let dir = "asc"; // Dirección inicial ascendente
+                let switchcount = 0;
+
+                while (switching) {
+                    switching = false;
+                    let rows = table.rows;
+
+                    for (let i = 1; i < (rows.length - 1); i++) {
+                        let shouldSwitch = false;
+                        let x = rows[i].getElementsByTagName("TD")[columnIndex];
+                        let y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+                        let xContent = x.textContent.toLowerCase();
+                        let yContent = y.textContent.toLowerCase();
+
+                        if (dir === "asc") {
+                            if (xContent > yContent) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else if (dir === "desc") {
+                            if (xContent < yContent) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                        switchcount++;
+                    } else {
+                        if (switchcount === 0 && dir === "asc") {
+                            dir = "desc";
+                            switching = true;
+                        }
+                    }
+                }
+            }
+
+            // Función para ver detalle del conductor
+            function verConductor(id) {
+                window.location.href = `/conductores/form/edit/${id}`;
+            }
+
+            // Agregar listener para filtrar tabla por estado
+            document.getElementById('estadoFilter').addEventListener('change', function () {
+                const filterValue = this.value.toLowerCase();
+                const table = document.getElementById('conductoresTable');
+                const trs = table.tBodies[0].rows;
+
+                for (let row of trs) {
+                    const estado = row.cells[4].textContent.toLowerCase();
+                    if (filterValue === '' || estado === filterValue) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+
+            // Exponer funciones globalmente para onclick inline
+            window.sortTable = sortTable;
+            window.verConductor = verConductor;
+        });
+    </script>
+
+    <script src="/conductores/list/list.js"></script>
+</body>
+</html>
+
+
+
+
