@@ -11,10 +11,10 @@ const User = models.users;
 
 const router = Router();
 
-// HOME
-router.get('/login', (req, res) => {
-	res.render('login/login', { title: 'Login', layout: false }); //login/login es views/login/login.hbs
-});
+// // HOME
+// router.get('/login', (req, res) => {
+// 	res.render('login/login', { title: 'Login', layout: false }); //login/login es views/login/login.hbs
+// });
 
 // AUTH
 router.post('/autenticar', async (req, res) => {
