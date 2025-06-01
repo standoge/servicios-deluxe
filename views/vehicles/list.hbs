@@ -1,3 +1,52 @@
+{{> navbar }}
+<div class="container">
+    <h1>Vehículos</h1>
+    <a href="/vehiculos/reporte" class="btn btn-warning" style="margin-bottom: 1rem; margin-right: 1rem;">
+        <span aria-hidden="true">&#128202;</span> Reportes
+    </a>
+    <a href="/vehiculos/form" class="btn btn-success" id="openAddModalBtn">
+        <span aria-hidden="true">&#43;</span> Agregar Vehículo
+    </a>
+    <table class="vehiculos-table">
+        <thead>
+            <tr>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>Color</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each vehiculos}}
+            <tr>
+                <td>{{this.placa}}</td>
+                <td>{{this.marca}}</td>
+                <td>{{this.modelo}}</td>
+                <td>{{this.anio}}</td>
+                <td>{{this.color}}</td>
+                <td>{{this.tipo_vehiculo}}</td>
+                <td>{{this.estado}}</td>
+                <td>
+                    <a href="/vehiculos/form/{{this.vehicle_id}}" class="btn btn-primary" title="Editar">
+                        <span aria-hidden="true">&#9998;</span> Editar
+                    </a>
+                    <form action="/vehiculos/{{this.vehicle_id}}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vehículo?');" title="Eliminar">
+                            <span aria-hidden="true">&#128465;</span> Eliminar
+                        </button>
+                        <input type="hidden" name="_method" value="DELETE">
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
 <style>
     .vehiculos-table {
         width: 100%;
@@ -60,51 +109,3 @@
         padding: 0 2rem;
     }
 </style>
-{{> navbar }}
-<div class="container">
-    <h1>Vehículos</h1>
-    <a href="/vehiculos/reporte" class="btn btn-warning" style="margin-bottom: 1rem; margin-right: 1rem;">
-        <span aria-hidden="true">&#128202;</span> Reportes
-    </a>
-    <a href="/vehiculos/form/add" class="btn btn-success">
-        <span aria-hidden="true">&#43;</span> Agregar Vehículo
-    </a>
-    <table class="vehiculos-table">
-        <thead>
-            <tr>
-                <th>Placa</th>
-                <th>Marca</th>
-                <th>Modelo</th>
-                <th>Año</th>
-                <th>Color</th>
-                <th>Tipo</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each vehiculos}}
-            <tr>
-                <td>{{this.placa}}</td>
-                <td>{{this.marca}}</td>
-                <td>{{this.modelo}}</td>
-                <td>{{this.anio}}</td>
-                <td>{{this.color}}</td>
-                <td>{{this.tipo_vehiculo}}</td>
-                <td>{{this.estado}}</td>
-                <td>
-                    <a href="/vehiculos/form/{{this.vehicle_id}}" class="btn btn-primary" title="Editar">
-                        <span aria-hidden="true">&#9998;</span> Editar
-                    </a>
-                    <form action="/vehiculos/{{this.vehicle_id}}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vehículo?');" title="Eliminar">
-                            <span aria-hidden="true">&#128465;</span> Eliminar
-                        </button>
-                        <input type="hidden" name="_method" value="DELETE">
-                    </form>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-</div>

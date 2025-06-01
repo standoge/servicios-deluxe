@@ -1,9 +1,94 @@
 {{> navbar }}
 
-<div style="display: flex; justify-content: center; align-items: center; height: 80vh;">
-    <div style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 300px;">
-        <h2>¡Bienvenido al sistema!</h2>
-        <p>Tu cuenta ha sido creada exitosamente.</p>
-        <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .panel-bg {
+        min-height: 100vh;
+        background: #f5f6fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .panel-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 2rem;
+        background: #fff;
+        padding: 2.5rem 2rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+        min-width: 400px;
+        max-width: 700px;
+    }
+    .panel-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem 1rem;
+        border-radius: 10px;
+        background: #f8f9fa;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        transition: box-shadow 0.2s, transform 0.2s;
+        text-decoration: none;
+        color: #343a40;
+    }
+    .panel-card:hover {
+        box-shadow: 0 4px 16px rgba(0,123,255,0.15);
+        transform: translateY(-4px) scale(1.03);
+        background: #e3f2fd;
+        color: #007bff;
+    }
+    .panel-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.7rem;
+    }
+    .panel-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    .logout-link {
+        display: block;
+        margin: 2rem auto 0 auto;
+        text-align: center;
+        color: #fff;
+        background: #dc3545;
+        padding: 0.7rem 2rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        width: max-content;
+        transition: background 0.2s;
+    }
+    .logout-link:hover {
+        background: #b52a37;
+    }
+</style>
+
+<div class="panel-bg">
+    <div>
+        <div class="panel-card-grid">
+            <a href="/servicios/list" class="panel-card">
+                <span class="panel-icon" aria-hidden="true">&#9881;</span>
+                <span class="panel-label">Servicios</span>
+            </a>
+            <a href="/clientes/list" class="panel-card">
+                <span class="panel-icon" aria-hidden="true">&#128100;</span>
+                <span class="panel-label">Clientes</span>
+            </a>
+            <a href="/conductores/list" class="panel-card">
+                <span class="panel-icon" aria-hidden="true">&#128663;</span>
+                <span class="panel-label">Conductores</span>
+            </a>
+            <a href="/vehiculos/list" class="panel-card">
+                <span class="panel-icon" aria-hidden="true">&#128664;</span>
+                <span class="panel-label">Vehículos</span>
+            </a>
+        </div>
+        <a href="/logout" class="logout-link">Cerrar sesión</a>
     </div>
 </div>

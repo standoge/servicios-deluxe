@@ -1,1 +1,233 @@
-Este es el formulario de vehiculos
+{{> navbar }}
+
+<style>
+.form-vehiculo-container {
+    max-width: 520px;
+    margin: 2.5rem auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    padding: 2.5rem 2rem 2rem 2rem;
+}
+.form-vehiculo-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #007bff;
+}
+.form-vehiculo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.form-group label {
+    flex: 0 0 120px;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 0;
+    text-align: right;
+}
+.form-group input, .form-group select {
+    flex: 1 1 auto;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: #f8f9fa;
+    transition: border 0.2s;
+}
+.form-group input:focus, .form-group select:focus {
+    border: 1.5px solid #007bff;
+    outline: none;
+    background: #fff; 
+}
+.form-vehiculo-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+.btn {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    background: #007bff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+}
+.btn-success {
+    background: #28a745;
+}
+.btn-warning {
+    background: #ffc107;
+    color: #343a40;
+}
+.btn-success:hover {
+    background: #218838;
+}
+.btn-warning:hover {
+    background: #e0a800;
+}
+@media (max-width: 600px) {
+    .form-vehiculo-container {
+        padding: 1.2rem 0.5rem;
+    }
+    .form-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.2rem;
+    }
+    .form-group label {
+        text-align: left;
+    }
+}
+</style>
+
+<div class="form-vehiculo-container">
+    <h2>
+        {{#if vehiculo}}
+            <span aria-hidden="true">&#9998;</span> Modificar Vehículo
+        {{else}}
+            <span aria-hidden="true">&#43;</span> Agregar Vehículo
+        {{/if}}
+    </h2>
+    <form id="vehiculoForm" class="form-vehiculo" autocomplete="off" method="post" onsubmit="enviar(event)">
+        {{#if vehiculo}}
+            <input type="hidden" name="_method" value="PUT">
+        {{/if}}
+        {{#if vehiculo}}
+            <input type="hidden" name="vehicle_id" value="{{vehiculo._id}}">
+        {{else}}
+            <input type="hidden" name="vehicle_id" value="">
+        {{/if}}
+        {{#if vehiculo}}
+            <input type="hidden" name="vehicle_id" value="{{vehiculo.vehicle_id}}">
+        {{/if}}
+        <div class="form-group">
+            <label for="placa">Placa:</label>
+            <input type="text" id="placa" name="placa" value="{{vehiculo.placa}}" required>
+        </div>
+        <div class="form-group">
+            <label for="marca">Marca:</label>
+            <input type="text" id="marca" name="marca" value="{{vehiculo.marca}}" required>
+        </div>
+        <div class="form-group">
+            <label for="modelo">Modelo:</label>
+            <input type="text" id="modelo" name="modelo" value="{{vehiculo.modelo}}" required>
+        </div>
+        <div class="form-group">
+            <label for="anio">Año:</label>
+            <input type="number" id="anio" name="anio" value="{{vehiculo.anio}}" required min="1900" max="2100">
+        </div>
+        <div class="form-group">
+            <label for="color">Color:</label>
+            <input type="text" id="color" name="color" value="{{vehiculo.color}}">
+        </div>
+        <div class="form-group">
+            <label for="tipo_vehiculo">Tipo:</label>
+            <select id="tipo_vehiculo" name="tipo_vehiculo" required>
+                <option value="">Seleccione...</option>
+                <option value="Sedán" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "Sedán"}}selected{{/ifeq}}{{/if}}>Sedán</option>
+                <option value="Hatchback" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "Hatchback"}}selected{{/ifeq}}{{/if}}>Hatchback</option>
+                <option value="SUV (Sport Utility Vehicle)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "SUV (Sport Utility Vehicle)"}}selected{{/ifeq}}{{/if}}>SUV (Sport Utility Vehicle)</option>
+                <option value="Coupé" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "Coupé"}}selected{{/ifeq}}{{/if}}>Coupé</option>
+                <option value="Camioneta (Pick-up)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "Camioneta (Pick-up)"}}selected{{/ifeq}}{{/if}}>Camioneta (Pick-up)</option>
+                <option value="Minivan" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "Minivan"}}selected{{/ifeq}}{{/if}}>Minivan</option>
+                <option value="Microbús" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "Microbús"}}selected{{/ifeq}}{{/if}}>Microbús</option>
+                <option value="Autobús" {{#if vehiculo}}{{#ifeq vehiculo.tipo_vehiculo "Autobús"}}selected{{/ifeq}}{{/if}}>Autobús</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="tipo_combustible">Combustible:</label>
+            <select id="tipo_combustible" name="tipo_combustible" required>
+                <option value="">Seleccione...</option>
+                <optgroup label="Gasolina (Nafteros)">
+                    <option value="Regular (87 octanos)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Regular (87 octanos)"}}selected{{/ifeq}}{{/if}}>Regular (87 octanos)</option>
+                    <option value="Premium (91-95 octanos)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Premium (91-95 octanos)"}}selected{{/ifeq}}{{/if}}>Premium (91-95 octanos)</option>
+                    <option value="Super Premium (98+ octanos)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Super Premium (98+ octanos)"}}selected{{/ifeq}}{{/if}}>Super Premium (98+ octanos)</option>
+                </optgroup>
+                <optgroup label="Diésel (Gasóleo)">
+                    <option value="Diésel estándar" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Diésel estándar"}}selected{{/ifeq}}{{/if}}>Diésel estándar</option>
+                    <option value="Diésel Ultra Bajo Azufre (UBA)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Diésel Ultra Bajo Azufre (UBA)"}}selected{{/ifeq}}{{/if}}>Diésel Ultra Bajo Azufre (UBA)</option>
+                </optgroup>
+                <optgroup label="Combustibles Alternativos">
+                    <option value="Gas Licuado de Petróleo (GLP/Autogás)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Gas Licuado de Petróleo (GLP/Autogás)"}}selected{{/ifeq}}{{/if}}>Gas Licuado de Petróleo (GLP/Autogás)</option>
+                    <option value="Gas Natural Comprimido (GNC)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Gas Natural Comprimido (GNC)"}}selected{{/ifeq}}{{/if}}>Gas Natural Comprimido (GNC)</option>
+                    <option value="Electricidad (VE/BEV)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Electricidad (VE/BEV)"}}selected{{/ifeq}}{{/if}}>Electricidad (VE/BEV)</option>
+                    <option value="Híbridos (HEV/PHEV)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Híbridos (HEV/PHEV)"}}selected{{/ifeq}}{{/if}}>Híbridos (HEV/PHEV)</option>
+                    <option value="Hidrógeno (Pila de combustible)" {{#if vehiculo}}{{#ifeq vehiculo.tipo_combustible "Hidrógeno (Pila de combustible)"}}selected{{/ifeq}}{{/if}}>Hidrógeno (Pila de combustible)</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="kilometraje">Kilometraje:</label>
+            <input type="number" id="kilometraje" name="kilometraje" value="{{vehiculo.kilometraje}}">
+        </div>
+        <div class="form-group">
+            <label for="capacidad_pasajeros">Capacidad Pasajeros:</label>
+            <input type="number" id="capacidad_pasajeros" name="capacidad_pasajeros" value="{{vehiculo.capacidad_pasajeros}}">
+        </div>
+        <div class="form-group">
+            <label for="numero_puertas">Número de Puertas:</label>
+            <input type="number" id="numero_puertas" name="numero_puertas" value="{{vehiculo.numero_puertas}}">
+        </div>
+        <div class="form-group">
+            <label for="transmision">Transmisión:</label>
+            <select id="transmision" name="transmision" required>
+                <option value="">Seleccione...</option>
+                <option value="Automática" {{#if vehiculo}}{{#ifeq vehiculo.transmision "Automática"}}selected{{/ifeq}}{{/if}}>Automática</option>
+                <option value="Manual" {{#if vehiculo}}{{#ifeq vehiculo.transmision "Manual"}}selected{{/ifeq}}{{/if}}>Manual</option>
+                <option value="CVT" {{#if vehiculo}}{{#ifeq vehiculo.transmision "CVT"}}selected{{/ifeq}}{{/if}}>CVT</option>
+                <option value="Semi-auto" {{#if vehiculo}}{{#ifeq vehiculo.transmision "Semi-auto"}}selected{{/ifeq}}{{/if}}>Semi-auto</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="">Seleccione...</option>
+                <option value="Nuevo" {{#if vehiculo}}{{#ifeq vehiculo.estado "Nuevo"}}selected{{/ifeq}}{{/if}}>Nuevo</option>
+                <option value="Usado" {{#if vehiculo}}{{#ifeq vehiculo.estado "Usado"}}selected{{/ifeq}}{{/if}}>Usado</option>
+                <option value="Reparado" {{#if vehiculo}}{{#ifeq vehiculo.estado "Reparado"}}selected{{/ifeq}}{{/if}}>Reparado</option>
+                <option value="Chocado" {{#if vehiculo}}{{#ifeq vehiculo.estado "Chocado"}}selected{{/ifeq}}{{/if}}>Chocado</option>
+                <option value="Robado" {{#if vehiculo}}{{#ifeq vehiculo.estado "Robado"}}selected{{/ifeq}}{{/if}}>Robado</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="fecha_compra">Fecha Compra:</label>
+            <input type="date" id="fecha_compra" name="fecha_compra" value="{{vehiculo.fecha_compra}}">
+        </div>
+        <div class="form-group">
+            <label for="ultimo_mantenimiento">Último Mantenimiento:</label>
+            <input type="date" id="ultimo_mantenimiento" name="ultimo_mantenimiento" value="{{vehiculo.ultimo_mantenimiento}}">
+        </div>
+        <div class="form-group">
+            <label for="seguro_vigente">Seguro Vigente:</label>
+            <select id="seguro_vigente" name="seguro_vigente">
+                <option value="true" {{#if vehiculo}}{{#if vehiculo.seguro_vigente}}selected{{/if}}{{/if}}>Sí</option>
+                <option value="false" {{#if vehiculo}}{{#unless vehiculo.seguro_vigente}}selected{{/unless}}{{/if}}>No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="poliza_seguro">Póliza Seguro:</label>
+            <input type="text" id="poliza_seguro" name="poliza_seguro" value="{{vehiculo.poliza_seguro}}">
+        </div>
+        <div class="form-vehiculo-btns">
+            <button type="submit" class="btn btn-success">
+                {{#if vehiculo}}Modificar{{else}}Agregar{{/if}}
+            </button>
+            <a href="/vehiculos/list" class="btn btn-warning">Cancelar</a>
+        </div>
+        <div id="form-message" style="margin-top:1rem;text-align:center;"></div>
+    </form>
+</div>
+<script src="/js/vehiculosService.js"></script>

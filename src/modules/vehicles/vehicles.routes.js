@@ -4,14 +4,17 @@ import {
   listarVehiculos,
   actualizarVehiculo,
   eliminarVehiculo,
-  generarReporte
+  generarReporte,
+  mostrarFormularioVehiculo // <-- Agrega este controlador
 } from './vehicles.controller.js';
 
 const router = express.Router();
 
 // Rutas para la interfaz web
-router.get('/list/', listarVehiculos)
+router.get('/list/', listarVehiculos);
 router.get('/reporte', generarReporte);
+router.get('/form', mostrarFormularioVehiculo); // Para agregar
+router.get('/form/:id', mostrarFormularioVehiculo); // Para modificar
 
 // Rutas para CRUD 
 router.post('/', crearVehiculo);

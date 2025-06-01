@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     tipo_combustible: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(50),
       allowNull: false
     },
     kilometraje: {
@@ -79,10 +79,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     fecha_compra: {
       type: DataTypes.DATEONLY,
-      allowNull: true,
-      validate: {
-        isBefore: new Date().toISOString().split('T')[0]
-      }
+      allowNull: true
     },
     ultimo_mantenimiento: {
       type: DataTypes.DATEONLY,

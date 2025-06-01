@@ -32,15 +32,20 @@ const listarVehiculos = async (req, res) => {
 // Controlador para crear un vehículo
 const crearVehiculo = async (req, res) => {
     try {
-        const nuevoVehiculo = {
-            ...req.body
-        };
+        const nuevoVehiculo = { ...req.body };
+
+        nuevoVehiculo.vehicle_id = parseInt(nuevoVehiculo.vehicle_id) || 0;
+
         await createVehicle(nuevoVehiculo);
 
+        if (req.headers['content-type'] === 'application/json') {
+            return res.status(200).json({ success: true });
+        }
         res.redirect('/vehiculos/list?success=created');
-
     } catch (error) {
-        console.log('Error al crear vehículo',error);
+        if (req.headers['content-type'] === 'application/json') {
+            return res.status(400).send(error.message || 'Error al crear vehículo');
+        }
         res.status(500).render('error', { 
             message: "Error al crear vehículo",
             error: error
@@ -55,12 +60,15 @@ const actualizarVehiculo = async (req, res) => {
         const indice = await getVehicleById(id);
         if(indice !== -1){
             await updateVehicle(id, req.body);
-        };
-
+        }
+        if (req.headers['content-type'] === 'application/json') {
+            return res.status(200).json({ success: true });
+        }
         res.redirect('/vehiculos/list?success=updated');
-
     } catch (error) {
-        console.log('Error al actualizar vehículo',error);
+        if (req.headers['content-type'] === 'application/json') {
+            return res.status(400).send(error.message || 'Error al actualizar vehículo');
+        }
         res.status(500).render('error', { 
             message: "Error al actualizar vehículo",
             error: error
@@ -142,11 +150,27 @@ const generarReporte = async (req, res) => {
     }
 };
 
+const mostrarFormularioVehiculo = async (req, res) => {
+    try {
+        let vehiculo = null;
+        if (req.params.id) {
+            vehiculo = await getVehicleById(req.params.id);
+        }
+        res.render('vehicles/form', { vehiculo });
+    } catch (error) {
+        res.status(500).render('error', {
+            message: "Error al mostrar el formulario de vehículo",
+            error: error
+        });
+    }
+};
+
 
 export {
     crearVehiculo,
     listarVehiculos,
     actualizarVehiculo,
     eliminarVehiculo,
-    generarReporte
+    generarReporte,
+    mostrarFormularioVehiculo
 };

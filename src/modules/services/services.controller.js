@@ -21,7 +21,10 @@ const registerHandlebarsHelpers = () => ({
     },
     formatNumber: function (number) {
         return number.toLocaleString();
-    }
+    },
+     ifeq: function (a, b, options) {
+            return a === b ? options.fn(this) : options.inverse(this);
+        }
 });
 
 // Función para generar el calendario
