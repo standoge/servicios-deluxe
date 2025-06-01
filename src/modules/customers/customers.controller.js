@@ -7,6 +7,7 @@ import {
     updateCustomer,
     deleteCustomer
 } from './customers.service.js';
+import ExcelJS from 'exceljs';
 
 // Controlador para listar clientes
 const listarClientes = async (req, res) => {
@@ -73,7 +74,7 @@ const eliminarCliente = async (req, res) => {
         }
 
         res.redirect('/clientes/list?success=deleted');
-        
+
     } catch (error) {
         console.log('Error al eliminar cliente', error);
         res.status(500).render('error', { 
@@ -83,9 +84,61 @@ const eliminarCliente = async (req, res) => {
     }
 };
 
+const generarReporte = async (req, res) => {
+    try {
+        // Obtener los datos de la base de datos
+        const clientes = await getAllCustomers();
+
+        // Crear un nuevo libro de Excel
+        const workbook = new ExcelJS.Workbook();
+
+        // Agregar una nueva hoja al libro
+        const worksheet = workbook.addWorksheet('Clientes');
+
+        // Escribir los encabezados de la tabla en la primera fila
+        worksheet.columns = [
+            { header: 'ID', key: 'customer_id', width: 5 },
+            { header: 'Nombre', key: 'name', width: 20  },
+            { header: 'Teléfono', key: 'phone', width: 15  },
+            { header: 'Correo Electrónico', key: 'email', width: 20  },
+            { header: 'Ubicacion', key: 'location', width: 20  },
+            { header: 'Comentarios', key: 'comment', width: 20  },
+        ];
+
+        // Escribir los datos de la tabla en las siguientes filas
+        clientes.forEach((cliente) => {
+            worksheet.addRow({
+                customer_id: cliente.customer_id,
+                name: cliente.name,
+                phone: cliente.phone,
+                email: cliente.email,
+                location: cliente.location,
+                comment: cliente.comment
+            });
+        });
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=Clientes_reporte.xlsx'
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+        
+    } catch (error) {
+        console.log('Error generar reporte', error);
+        res.status(500).send('Error al generar el reporte');
+    }
+};
+
 export {
     listarClientes,
     crearCliente,
     actualizarCliente,
-    eliminarCliente
+    eliminarCliente,
+    generarReporte
 };
