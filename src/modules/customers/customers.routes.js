@@ -1,43 +1,26 @@
+
+// customers.routes.js
+
 import express from 'express';
 import {
-    mostrarListadoClientes,
-    renderCustomerForm,
-    createCustomer,
-    getCustomerById,
-    updateCustomer
+    crearCliente,
+    listarClientes,
+    actualizarCliente,
+    eliminarCliente,
+    generarReporte
+
 } from './customers.controller.js';
 
 const router = express.Router();
 
-//Ruta: http://localhost:3000/clientes/list
-router.get('/list', mostrarListadoClientes);
+// Rutas para la interfaz web
+router.get('/list', listarClientes);
+router.get('/reporte', generarReporte);
 
-// Ruta para mostrar el formulario de registro de nuevo cliente
-router.get('/nuevo', renderCustomerForm);
-
-// Ruta para guardar un nuevo cliente
-router.post('/nuevo', createCustomer);
-
-// Ruta para mostrar el formulario de edición de un cliente existente
-router.get('/editar/:id', getCustomerById);
-
-// Ruta para actualizar los datos de un cliente
-router.post('/editar/:id', updateCustomer);
+// Rutas para el CRUD de clientes
+router.post('/', crearCliente);
+router.post('/:id', actualizarCliente);
+router.delete('/:id', eliminarCliente);
 
 export default router;
-
-
-/*
-// Rutas para la interfaz web
-router.get('/list/', listarServicios);
-router.get('/form/add', mostrarFormularioNuevo);
-router.get('/form/:id', mostrarFormularioEdicion);
-
-// Rutas para CRUD
-router.post('/', crearServicio);
-router.post('/:id', actualizarServicio);
-router.delete('/:id', eliminarServicio);
-
-*/
-
 

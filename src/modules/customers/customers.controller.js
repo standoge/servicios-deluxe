@@ -1,83 +1,145 @@
+// customers.controller.js
 
-// Simulación de base de datos en memoria
-let clientesDB = [
-    { id: 1, nombre: "Ana", apellido: "Martínez", correo: "ana@example.com", telefono: "1234-5678", estado: "activo" },
-    { id: 2, nombre: "Carlos", apellido: "López", correo: "carlos@example.com", telefono: "8765-4321", estado: "inactivo" }
-];
+import {
+    createCustomer,
+    getAllCustomers,
+    getCustomerById,
+    updateCustomer,
+    deleteCustomer
+} from './customers.service.js';
+import ExcelJS from 'exceljs';
 
-
-// Mostrar listado de clientes
-export function mostrarListadoClientes(req, res) {
-    const estadisticas = {
-        totalClientes: clientesDB.length,
-        activos: clientesDB.filter(c => c.estado === 'activo').length,
-        inactivos: clientesDB.filter(c => c.estado === 'inactivo').length
-    };
-
-    res.render('customers/list', {
-        clientes: clientesDB,
-        estadisticas,
-        clientesJSON: JSON.stringify(clientesDB)
-    });
-}
-
-// Mostrar formulario vacío
-export function renderCustomerForm(req, res) {
-    res.render('customers/form', {
-        titulo: 'Registrar Cliente',
-        accion: '/clientes/nuevo',
-        cliente: {}
-    });
-}
-
-// Guardar nuevo cliente
-export function createCustomer(req, res) {
-    const { nombre, apellido, correo, telefono, estado } = req.body;
-
-    const nuevoCliente = {
-        id: clientesDB.length + 1,
-        nombre,
-        apellido,
-        correo,
-        telefono,
-        estado
-    };
-
-    clientesDB.push(nuevoCliente);
-    res.redirect('/clientes');
-}
-
-// Mostrar formulario con datos para edición
-export function getCustomerById(req, res) {
-    const cliente = clientesDB.find(c => c.id === parseInt(req.params.id));
-
-    if (!cliente) {
-        return res.status(404).send('Cliente no encontrado');
+// Controlador para listar clientes
+const listarClientes = async (req, res) => {
+    try {
+        const clientes = await getAllCustomers();
+        const datosVista = {
+            clientes
+        };
+        res.render('customers/list', datosVista);
+    } catch (error) {
+        console.log('Error al listar clientes', error);
+        res.status(500).render('error', {
+            message: "Error al listar clientes",
+            error: error
+        });
     }
+};
 
-    res.render('customers/form', {
-        titulo: 'Editar Cliente',
-        accion: `/clientes/editar/${cliente.id}`,
-        cliente
-    });
-}
+// Controlador para crear un cliente
+const crearCliente = async (req, res) => {
+    try {
+        const nuevoCliente = {
+            ...req.body
+        };
+        await createCustomer(nuevoCliente);
+        res.redirect('/clientes/list?success=created');
 
-// Actualizar cliente
-export function updateCustomer(req, res) {
-    const cliente = clientesDB.find(c => c.id === parseInt(req.params.id));
-
-    if (!cliente) {
-        return res.status(404).send('Cliente no encontrado');
+    } catch (error) {
+        console.log('Error al crear cliente', error);
+        res.status(500).render('error', {
+            message: "Error al crear cliente",
+            error: error
+        });
     }
+};
 
-    const { nombre, apellido, correo, telefono, estado } = req.body;
+// Controlador para actualizar un cliente
+const actualizarCliente = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const indice = getCustomerById(id);
+        if (indice !== -1) {
+            await updateCustomer(id, req.body);
+        }
 
-    cliente.nombre = nombre;
-    cliente.apellido = apellido;
-    cliente.correo = correo;
-    cliente.telefono = telefono;
-    cliente.estado = estado;
+        res.redirect('/clientes/list?success=updated');
+    } catch (error) {
+        console.log('Error al actualizar cliente', error);
+        res.status(500).render('error', { 
+            message: "Error al actualizar cliente",
+            error: error
+        });
+    }
+};
 
-    res.redirect('/clientes/list');
-}
+// Controlador para eliminar un cliente
+const eliminarCliente = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const indice = await getCustomerById(id);
+        if (indice !== -1) {
+            await deleteCustomer(id);
+        }
+
+        res.redirect('/clientes/list?success=deleted');
+
+    } catch (error) {
+        console.log('Error al eliminar cliente', error);
+        res.status(500).render('error', { 
+            message: "Error al eliminar cliente",
+            error: error
+        });
+    }
+};
+
+const generarReporte = async (req, res) => {
+    try {
+        // Obtener los datos de la base de datos
+        const clientes = await getAllCustomers();
+
+        // Crear un nuevo libro de Excel
+        const workbook = new ExcelJS.Workbook();
+
+        // Agregar una nueva hoja al libro
+        const worksheet = workbook.addWorksheet('Clientes');
+
+        // Escribir los encabezados de la tabla en la primera fila
+        worksheet.columns = [
+            { header: 'ID', key: 'customer_id', width: 5 },
+            { header: 'Nombre', key: 'name', width: 20  },
+            { header: 'Teléfono', key: 'phone', width: 15  },
+            { header: 'Correo Electrónico', key: 'email', width: 20  },
+            { header: 'Ubicacion', key: 'location', width: 20  },
+            { header: 'Comentarios', key: 'comment', width: 20  },
+        ];
+
+        // Escribir los datos de la tabla en las siguientes filas
+        clientes.forEach((cliente) => {
+            worksheet.addRow({
+                customer_id: cliente.customer_id,
+                name: cliente.name,
+                phone: cliente.phone,
+                email: cliente.email,
+                location: cliente.location,
+                comment: cliente.comment
+            });
+        });
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=Clientes_reporte.xlsx'
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+        
+    } catch (error) {
+        console.log('Error generar reporte', error);
+        res.status(500).send('Error al generar el reporte');
+    }
+};
+
+export {
+    listarClientes,
+    crearCliente,
+    actualizarCliente,
+    eliminarCliente,
+    generarReporte
+};
 

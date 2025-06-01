@@ -6,16 +6,15 @@ import { engine } from 'express-handlebars';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import methodOverride from 'method-override';
+import session from 'express-session';
 
 // Endpoints
+import clientesRoutes from './modules/customers/customers.routes.js';
 import loginRoutes from './modules/login/login.routes.js';
 import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 import serviciosRoutes from './modules/services/services.routes.js';
+import usersRoutes from './modules/users/users.routes.js';
 import {registerHandlebarsHelpers} from './modules/services/services.controller.js'
-import conductoresRoutes from './modules/drivers/drivers.routes.js';
-import clientesRoutes from './modules/customers/customers.routes.js';
-
-
 
 
 // Define __dirname for ES modules
@@ -44,7 +43,11 @@ app.engine('hbs', engine({
 	layoutsDir: path.join(__dirname, '../views/layouts'),
 	partialsDir: path.join(__dirname, '../views/partials'),
 	extname: '.hbs',
-	helpers: registerHandlebarsHelpers()
+	helpers: registerHandlebarsHelpers(),
+	runtimeOptions: {
+		allowProtoMethodsByDefault: true,
+		allowProtoPropertiesByDefault: true
+	}
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, '../views'));
@@ -53,15 +56,26 @@ app.set('views', path.join(__dirname, '../views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Session middleware
+app.use(session({
+    secret: 'tu_clave_secreta', // cámbiala por una clave segura
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } // Usa true solo si usas HTTPS
+}));
+
 // Endpoints use
 app.use('/', loginRoutes);
-app.use('/vehiculos', vehiculosRoutes);
-app.use('/servicios', serviciosRoutes);
-app.use('/conductores', conductoresRoutes);
-app.use('/clientes', clientesRoutes);
 
-// app.use(methodOverride('_method'));
+// Protege todas las rutas de vehículos y servicios
+app.use('/clientes', requireAuth, clientesRoutes);
+app.use('/vehiculos', requireAuth, vehiculosRoutes);
+app.use('/servicios', requireAuth, serviciosRoutes);
 
+// Protege el panel de bienvenida
+app.get('/panelhome', requireAuth, (req, res) => {
+    res.render('panelhome', { title: 'Panel de Bienvenida' });
+});
 
 
 export default app;

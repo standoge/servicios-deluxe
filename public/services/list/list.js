@@ -172,10 +172,10 @@ function crearCeldaDia(numeroDia, otroMes) {
 
 function obtenerServiciosDelDia(fecha) {
     return servicios.filter(servicio => {
-        if (vehiculoFiltro && servicio.vehiculo.placa !== vehiculoFiltro) {
+        if (vehiculoFiltro && servicio.vehicle.placa !== vehiculoFiltro) {
             return false;
         }
-        return servicio.fechaServicio === fecha;
+        return servicio.fecha_servicio === fecha;
     });
 }
 
@@ -185,8 +185,8 @@ function crearItemServicio(servicio) {
     item.onclick = () => editarServicio(servicio.id);
     
     item.innerHTML = `
-        <div class="service-vehicle">${servicio.vehiculo.placa}</div>
-        <div class="service-type">${servicio.tipoServicio}</div>
+        <div class="service-vehicle">${servicio.vehicle.placa}</div>
+        <div class="service-type">${servicio.tipo_servicio}</div>
         <div class="service-cost">$${servicio.costo.toLocaleString()}</div>
     `;
     
@@ -195,19 +195,19 @@ function crearItemServicio(servicio) {
 
 function actualizarEstadisticas() {
     const serviciosFiltrados = servicios.filter(servicio => {
-        if (vehiculoFiltro && servicio.vehiculo.placa !== vehiculoFiltro) {
+        if (vehiculoFiltro && servicio.vehicle.placa !== vehiculoFiltro) {
             return false;
         }
         return true;
     });
 
     const serviciosMes = serviciosFiltrados.filter(servicio => {
-        const fechaServicio = new Date(servicio.fechaServicio);
+        const fechaServicio = new Date(servicio.fecha_servicio);
         return fechaServicio.getMonth() === mesActual && fechaServicio.getFullYear() === anioActual;
     });
 
     const costoTotal = serviciosMes.reduce((total, servicio) => total + servicio.costo, 0);
-    const vehiculosUnicos = new Set(serviciosFiltrados.map(s => s.vehiculo.placa));
+    const vehiculosUnicos = new Set(serviciosFiltrados.map(s => s.vehicle.placa));
 
     const totalElement = document.getElementById('totalServicios');
     const mesElement = document.getElementById('serviciosMes');

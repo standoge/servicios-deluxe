@@ -1,60 +1,55 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('users', {
-    user_id: {
-      autoIncrement: true,
+  return sequelize.define('drivers', {
+    driver_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    username: {
+    name: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: "users_username_key"
+      unique: "drivers_name_key"
     },
-    password: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      unique: "users_password_key"
+    birthdate: {
+      type: DataTypes.DATEONLY,
+      allowNull: false
     },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: true
     },
-    role_id: {
+    phone: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'roles',
-        key: 'role_id'
-      }
+      allowNull: false,
+      unique: "drivers_phone_key"
     }
   }, {
     sequelize,
-    tableName: 'users',
+    tableName: 'drivers',
     schema: 'public',
     timestamps: false,
     indexes: [
       {
-        name: "users_password_key",
+        name: "drivers_name_key",
         unique: true,
         fields: [
-          { name: "password" },
+          { name: "name" },
         ]
       },
       {
-        name: "users_pkey",
+        name: "drivers_phone_key",
         unique: true,
         fields: [
-          { name: "user_id" },
+          { name: "phone" },
         ]
       },
       {
-        name: "users_username_key",
+        name: "drivers_pkey",
         unique: true,
         fields: [
-          { name: "username" },
+          { name: "driver_id" },
         ]
       },
     ]

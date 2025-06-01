@@ -1,136 +1,107 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Listado de Clientes</title>
-    <link rel="stylesheet" href="/clientes/list/list.css" />
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🧍 Clientes Registrados</h1>
-            <p>Gestión de usuarios del servicio de viajes</p>
-        </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="totalClientes">{{estadisticas.totalClientes}}</div>
-                <div class="stat-label">Total Clientes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="activos">{{estadisticas.activos}}</div>
-                <div class="stat-label">Activos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="inactivos">{{estadisticas.inactivos}}</div>
-                <div class="stat-label">Inactivos</div>
-            </div>
-        </div>
+<style>
+    .clientes-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .clientes-table th, .clientes-table td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+    .clientes-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #343a40;
+    }
+    .clientes-table tr:hover {
+        background: #e3f2fd;
+        transition: background 0.2s;
+    }
+    .btn {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+        background: #007bff;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
+    }
+    .btn-success {
+        background: #28a745;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+    .btn-primary {
+        background: #007bff;
+    }
+    .btn-warning {
+        background: #ffc107;
+        color: #343a40;
+    }
+    .btn-danger {
+        background: #dc3545;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+</style>
+{{> navbar }}
+<div class="container">
+    <h1>Clientes</h1>
+    <a href="/clientes/reporte" class="btn btn-warning" style="margin-bottom: 1rem; margin-right: 1rem;">
+       <span aria-hidden="true">&#128202;</span> Reportes
+    </a>
+    <a href="/clientes/form/add" class="btn btn-success">
+        <span aria-hidden="true">&#43;</span> Agregar Cliente
+    </a>
+    <table class="clientes-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each clientes}}
+            <tr>
+                <td>{{customer_id}}</td>
+                <td>{{name}}</td>
+                <td>{{phone}}</td>
+                <td>{{email}}</td>
+                <td>
+                    <a href="/clientes/form/{{this.customer_id}}" class="btn btn-primary" title="Editar">
+                        <span aria-hidden="true">&#9998;</span> Editar
+                    </a>
+                    <form action="/clientes/{{this.customer_id}}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este cliente?');" title="Eliminar">
+                            <span aria-hidden="true">&#128465;</span> Eliminar
+                        </button>
+                        <input type="hidden" name="_method" value="DELETE">
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
 
-        <div class="controls">
-            <div class="filter-group">
-                <label for="estadoFilter">Filtrar por Estado:</label>
-                <select id="estadoFilter">
-                    <option value="">Todos</option>
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <a href="http://localhost:3000/clientes/nuevo/" class="btn btn-success" target="_blank" rel="noopener noreferrer">
-                    ➕ Nuevo Cliente
-                </a>
-            </div>
-        </div>
-
-        <div class="listado-clientes">
-            <table id="clientesTable" class="table">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)">Nombre <span>▲▼</span></th>
-                        <th onclick="sortTable(1)">Apellido <span>▲▼</span></th>
-                        <th onclick="sortTable(2)">DUI <span>▲▼</span></th>
-                        <th onclick="sortTable(3)">Teléfono <span>▲▼</span></th>
-                        <th onclick="sortTable(4)">Estado <span>▲▼</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each clientes}}
-                    <tr onclick="verCliente({{this.id}})" style="cursor:pointer;">
-                        <td>{{this.nombre}}</td>
-                        <td>{{this.apellido}}</td>
-                        <td>{{this.dui}}</td>
-                        <td>{{this.telefono}}</td>
-                        <td>{{this.estado}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script id="clientesData" type="application/json">
-        {{{clientesJSON}}}
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            function sortTable(columnIndex) {
-                const table = document.getElementById("clientesTable");
-                let switching = true;
-                let dir = "asc";
-                let switchcount = 0;
-
-                while (switching) {
-                    switching = false;
-                    const rows = table.rows;
-
-                    for (let i = 1; i < (rows.length - 1); i++) {
-                        let shouldSwitch = false;
-                        const x = rows[i].getElementsByTagName("TD")[columnIndex];
-                        const y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
-                        const xContent = x.textContent.toLowerCase();
-                        const yContent = y.textContent.toLowerCase();
-
-                        if ((dir === "asc" && xContent > yContent) ||
-                            (dir === "desc" && xContent < yContent)) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    }
-
-                    if (shouldSwitch) {
-                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                        switching = true;
-                        switchcount++;
-                    } else if (switchcount === 0 && dir === "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
-            }
-
-            function verCliente(id) {
-                window.location.href = `/clientes/form/edit/${id}`;
-            }
-
-            document.getElementById('estadoFilter').addEventListener('change', function () {
-                const filterValue = this.value.toLowerCase();
-                const table = document.getElementById('clientesTable');
-                const trs = table.tBodies[0].rows;
-
-                for (let row of trs) {
-                    const estado = row.cells[4].textContent.toLowerCase();
-                    row.style.display = (filterValue === '' || estado === filterValue) ? '' : 'none';
-                }
-            });
-
-            window.sortTable = sortTable;
-            window.verCliente = verCliente;
-        });
-    </script>
-
-    <script src="/clientes/list/list.js"></script>
-</body>
-</html>
+    

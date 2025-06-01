@@ -1,0 +1,152 @@
+// vehicles.controller.js
+
+import {
+  createVehicle,
+  getAllVehicles,
+  updateVehicle,
+  deleteVehicle,
+  getVehicleById
+} from './vehicles.service.js';
+import ExcelJS from 'exceljs';
+
+//Controlador para listar vehículos
+const listarVehiculos = async (req, res) => {
+    try {
+        const vehiculos = await getAllVehicles()
+
+        const datosVista = {
+            vehiculos
+        };
+
+        res.render('vehicles/list', datosVista);
+
+    } catch (error) {
+        console.log('Error al listar vehículos',error);
+        res.status(500).render('error', { 
+            message: "Error al listar vehículos",
+            error: error
+        });
+    }
+};
+
+// Controlador para crear un vehículo
+const crearVehiculo = async (req, res) => {
+    try {
+        const nuevoVehiculo = {
+            ...req.body
+        };
+        await createVehicle(nuevoVehiculo);
+
+        res.redirect('/vehiculos/list?success=created');
+
+    } catch (error) {
+        console.log('Error al crear vehículo',error);
+        res.status(500).render('error', { 
+            message: "Error al crear vehículo",
+            error: error
+        });
+    }
+};
+
+// Controlador para actualizar vehiculo
+const actualizarVehiculo = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const indice = await getVehicleById(id);
+        if(indice !== -1){
+            await updateVehicle(id, req.body);
+        };
+
+        res.redirect('/vehiculos/list?success=updated');
+
+    } catch (error) {
+        console.log('Error al actualizar vehículo',error);
+        res.status(500).render('error', { 
+            message: "Error al actualizar vehículo",
+            error: error
+        });
+    }
+};
+
+// Controlador para elminar vehiculo
+const eliminarVehiculo = async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+
+        const indice = await getVehicleById(id);
+
+        if(indice !== -1){
+            await deleteVehicle(id);
+        };
+
+        res.redirect('/vehiculos/list?success=deleted');
+
+    } catch (error) {
+        console.log('Error al eliminar vehículo',error);
+        res.status(500).render('error', { 
+            message: "Error al eliminar vehículo",
+            error: error
+        });
+    }
+}
+
+const generarReporte = async (req, res) => {
+    try {
+        const vehiculos = await getAllVehicles();
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Vehículos');
+
+        worksheet.columns = [
+            { header: 'Placa', key: 'placa', width: 15 },
+            { header: 'Marca', key: 'marca', width: 15 },
+            { header: 'Modelo', key: 'modelo', width: 15 },
+            { header: 'Año', key: 'anio', width: 10 },
+            { header: 'Color', key: 'color', width: 12 },
+            { header: 'Tipo', key: 'tipo_vehiculo', width: 15 },
+            { header: 'Estado', key: 'estado', width: 12 },
+            { header: 'Fecha Compra', key: 'fecha_compra', width: 15 },
+            { header: 'Último Mantenimiento', key: 'ultimo_mantenimiento', width: 20 }
+        ];
+
+        vehiculos.forEach(v => worksheet.addRow({
+            placa: v.placa,
+            marca: v.marca,
+            modelo: v.modelo,
+            anio: v.anio,
+            color: v.color,
+            tipo_vehiculo: v.tipo_vehiculo,
+            estado: v.estado,
+            fecha_compra: v.fecha_compra
+                ? new Date(v.fecha_compra).toLocaleDateString('es-ES')
+                : '',
+            ultimo_mantenimiento: v.ultimo_mantenimiento
+                ? new Date(v.ultimo_mantenimiento).toLocaleDateString('es-ES')
+                : ''
+        }));
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=vehiculos_reporte.xlsx'
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error al generar reporte:', error);
+        res.status(500).send('Error al generar el reporte');
+    }
+};
+
+
+export {
+    crearVehiculo,
+    listarVehiculos,
+    actualizarVehiculo,
+    eliminarVehiculo,
+    generarReporte
+};

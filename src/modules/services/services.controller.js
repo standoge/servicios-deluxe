@@ -1,80 +1,18 @@
 // serviciosController.js
+import {
+    createService,
+    getAllServices,
+    updateService,
+    deleteService,
+    getServiceById
+} from './services.service.js';
+import sequelize from '../../config/sequelize.js';
+import initModels from '../../models/init-models.cjs'; // <-- Importación correcta
 
-// Datos de ejemplo - reemplazar con consultas a la base de datos
-const serviciosEjemplo = [
-    {
-        id: 1,
-        vehiculo: {
-            placa: "ABC-123",
-            marca: "Toyota",
-            modelo: "Corolla",
-            anio: 2020
-        },
-        tipoServicio: "Cambio de aceite",
-        fechaServicio: "2025-05-15",
-        horaServicio: "09:00",
-        duracionEstimada: "1.5 horas",
-        costo: 45000,
-        estado: "programado", // programado, urgente, completado
-        descripcion: "Cambio de aceite y filtro",
-        mecanico: "Juan Pérez",
-        observaciones: "Revisar nivel de líquidos"
-    },
-    {
-        id: 2,
-        vehiculo: {
-            placa: "XYZ-789",
-            marca: "Honda",
-            modelo: "Civic",
-            anio: 2019
-        },
-        tipoServicio: "Revisión de frenos",
-        fechaServicio: "2025-05-20",
-        horaServicio: "14:00",
-        duracionEstimada: "2 horas",
-        costo: 85000,
-        estado: "urgente",
-        descripcion: "Revisión completa del sistema de frenos",
-        mecanico: "María García",
-        observaciones: "Cliente reporta ruidos extraños"
-    },
-    {
-        id: 3,
-        vehiculo: {
-            placa: "DEF-456",
-            marca: "Nissan",
-            modelo: "Sentra",
-            anio: 2021
-        },
-        tipoServicio: "Mantenimiento general",
-        fechaServicio: "2025-05-08",
-        horaServicio: "08:30",
-        duracionEstimada: "3 horas",
-        costo: 120000,
-        estado: "completado",
-        descripcion: "Mantenimiento preventivo completo",
-        mecanico: "Carlos López",
-        observaciones: "Servicio completado satisfactoriamente"
-    },
-    {
-        id: 4,
-        vehiculo: {
-            placa: "GHI-101",
-            marca: "Chevrolet",
-            modelo: "Aveo",
-            anio: 2018
-        },
-        tipoServicio: "Cambio de llantas",
-        fechaServicio: "2025-05-25",
-        horaServicio: "10:00",
-        duracionEstimada: "1 hora",
-        costo: 200000,
-        estado: "programado",
-        descripcion: "Cambio de las 4 llantas",
-        mecanico: "Ana Rodríguez",
-        observaciones: "Llantas nuevas ya ordenadas"
-    }
-];
+const models = initModels(sequelize);
+
+const Servicio = models.services;
+const Vehiculo = models.vehicles;
 
 // Helper para registrar un helper de Handlebars
 const registerHandlebarsHelpers = () => ({
@@ -108,7 +46,7 @@ const generarCalendario = (mes, anio, servicios) => {
     // Días del mes actual
     for (let dia = 1; dia <= diasEnMes; dia++) {
         const fechaCompleta = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-        const serviciosDelDia = servicios.filter(s => s.fechaServicio === fechaCompleta)
+        const serviciosDelDia = servicios.filter(s => s.fecha_servicio === fechaCompleta)
             .map(servicio => ({
                 ...servicio,
                 costoFormateado: servicio.costo.toLocaleString()
@@ -142,19 +80,18 @@ const listarServicios = async (req, res) => {
         const anioActual = parseInt(req.query.anio) || new Date().getFullYear();
         const vehiculoFiltro = req.query.vehiculo || '';
 
-        // En producción, aquí irían las consultas a la base de datos
-        // const servicios = await ServicioModel.findAll({ where: filtros });
-        let servicios = [...serviciosEjemplo];
+        const servicios = await getAllServices();
 
         // Aplicar filtro de vehículo si existe
         if (vehiculoFiltro) {
-            servicios = servicios.filter(s => s.vehiculo.placa === vehiculoFiltro);
+            servicios = servicios.filter(s => s.vehiculos && s.vehiculos.placa === vehiculoFiltro);
         }
 
         // Obtener vehículos únicos para el filtro
-        const vehiculosUnicos = [...new Set(serviciosEjemplo.map(s => s.vehiculo.placa))]
+        const vehiculosUnicos = [...new Set(servicios.map(s => s.vehiculos?.placa))]
+            .filter(Boolean)
             .map(placa => {
-                const vehiculo = serviciosEjemplo.find(s => s.vehiculo.placa === placa).vehiculo;
+                const vehiculo = servicios.find(s => s.vehiculos && s.vehiculos.placa === placa)?.vehiculos?.toJSON?.() || {};
                 return {
                     ...vehiculo,
                     selected: placa === vehiculoFiltro
@@ -163,7 +100,7 @@ const listarServicios = async (req, res) => {
 
         // Calcular estadísticas
         const serviciosMes = servicios.filter(servicio => {
-            const fechaServicio = new Date(servicio.fechaServicio);
+            const fechaServicio = new Date(servicio.fecha_servicio);
             return fechaServicio.getMonth() === mesActual && fechaServicio.getFullYear() === anioActual;
         });
 
@@ -171,15 +108,15 @@ const listarServicios = async (req, res) => {
             totalServicios: servicios.length,
             serviciosMes: serviciosMes.length,
             costoTotal: serviciosMes.reduce((total, s) => total + s.costo, 0).toLocaleString(),
-            vehiculosActivos: new Set(servicios.map(s => s.vehiculo.placa)).size
+            vehiculosActivos: new Set(servicios.map(s => s.vehiculos?.placa).filter(Boolean)).size
         };
 
         // Generar calendario
         const diasCalendario = generarCalendario(mesActual, anioActual, servicios);
 
         // Generar años disponibles
-        const anioMinimo = Math.min(...serviciosEjemplo.map(s => new Date(s.fechaServicio).getFullYear()));
-        const anioMaximo = Math.max(...serviciosEjemplo.map(s => new Date(s.fechaServicio).getFullYear())) + 1;
+        const anioMinimo = Math.min(...servicios.map(s => new Date(s.fecha_servicio).getFullYear()));
+        const anioMaximo = Math.max(...servicios.map(s => new Date(s.fecha_servicio).getFullYear())) + 1;
         const aniosDisponibles = [];
         for (let anio = anioMinimo; anio <= anioMaximo; anio++) {
             aniosDisponibles.push(anio);
@@ -250,8 +187,7 @@ const mostrarFormularioEdicion = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
 
-        // En producción: const servicio = await ServicioModel.findByPk(id);
-        const servicio = serviciosEjemplo.find(s => s.id === id);
+        const servicio = await getServiceById(id);
 
         if (!servicio) {
             return res.status(404).render('error', {
@@ -286,8 +222,7 @@ const crearServicio = async (req, res) => {
             costo: parseFloat(req.body.costo)
         };
 
-        // En producción: await ServicioModel.create(nuevoServicio);
-        serviciosEjemplo.push(nuevoServicio);
+        await createService(nuevoServicio);
 
         res.redirect('/servicios/list?success=created');
 
@@ -305,15 +240,10 @@ const actualizarServicio = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
 
-        // En producción: await ServicioModel.update(req.body, { where: { id } });
-        const indice = serviciosEjemplo.findIndex(s => s.id === id);
+        const indice = getServiceById(id);
         if (indice !== -1) {
-            serviciosEjemplo[indice] = {
-                ...serviciosEjemplo[indice],
-                ...req.body,
-                costo: parseFloat(req.body.costo)
-            };
-        }
+            updateService(id, req.body);
+        };
 
         res.redirect('/servicios/list?success=updated');
 
@@ -331,10 +261,9 @@ const eliminarServicio = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
 
-        // En producción: await ServicioModel.destroy({ where: { id } });
-        const indice = serviciosEjemplo.findIndex(s => s.id === id);
+        const indice = getServiceById(id);
         if (indice !== -1) {
-            serviciosEjemplo.splice(indice, 1);
+            deleteService(id);
         }
 
         res.redirect('/servicios/list?success=deleted');
@@ -355,14 +284,14 @@ const obtenerServiciosAPI = async (req, res) => {
         const anioActual = parseInt(req.query.anio) || new Date().getFullYear();
         const vehiculoFiltro = req.query.vehiculo || '';
 
-        let servicios = [...serviciosEjemplo];
+        const servicios = await getAllServices();
 
         if (vehiculoFiltro) {
-            servicios = servicios.filter(s => s.vehiculo.placa === vehiculoFiltro);
+            servicios = servicios.filter(s => s.vehiculos && s.vehiculos.placa === vehiculoFiltro);
         }
 
         const serviciosMes = servicios.filter(servicio => {
-            const fechaServicio = new Date(servicio.fechaServicio);
+            const fechaServicio = new Date(servicio.fecha_servicio);
             return fechaServicio.getMonth() === mesActual && fechaServicio.getFullYear() === anioActual;
         });
 
@@ -372,7 +301,7 @@ const obtenerServiciosAPI = async (req, res) => {
                 totalServicios: servicios.length,
                 serviciosMes: serviciosMes.length,
                 costoTotal: serviciosMes.reduce((total, s) => total + s.costo, 0),
-                vehiculosActivos: new Set(servicios.map(s => s.vehiculo.placa)).size
+                vehiculosActivos: new Set(servicios.map(s => s.vehiculos?.placa).filter(Boolean)).size
             }
         });
 

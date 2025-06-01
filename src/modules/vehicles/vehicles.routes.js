@@ -1,8 +1,21 @@
 import express from 'express';
-const ROUTER = express.Router();
+import {
+  crearVehiculo,
+  listarVehiculos,
+  actualizarVehiculo,
+  eliminarVehiculo,
+  generarReporte
+} from './vehicles.controller.js';
 
-ROUTER.get('/', (req, res) => {
-  res.send('Index');
-});
+const router = express.Router();
 
-export default ROUTER;
+// Rutas para la interfaz web
+router.get('/list/', listarVehiculos)
+router.get('/reporte', generarReporte);
+
+// Rutas para CRUD 
+router.post('/', crearVehiculo);
+router.post('/:id', actualizarVehiculo);
+router.delete('/:id', eliminarVehiculo);
+
+export default router;
