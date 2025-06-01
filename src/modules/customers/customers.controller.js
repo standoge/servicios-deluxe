@@ -66,11 +66,14 @@ const actualizarCliente = async (req, res) => {
 const eliminarCliente = async (req, res) => {
     try {
         const id = req.params.id;
-        const indice = getCustomerById(id);
+
+        const indice = await getCustomerById(id);
         if (indice !== -1) {
             await deleteCustomer(id);
         }
+
         res.redirect('/clientes/list?success=deleted');
+        
     } catch (error) {
         console.log('Error al eliminar cliente', error);
         res.status(500).render('error', { 

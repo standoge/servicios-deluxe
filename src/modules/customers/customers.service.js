@@ -19,7 +19,7 @@ const updateCustomer = async (id, customerData) => {
   return customer ? customer.update(customerData) : null;
 };
 
-const deleteCustomer = async (id) => Customer.destroy({ where: { id } });
+const deleteCustomer = async (id) => Customer.destroy({ where: { customer_id: id }});
 
 export {
   createCustomer,

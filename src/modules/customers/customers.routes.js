@@ -15,7 +15,7 @@ router.get('/list', listarClientes);
 
 // Rutas para el CRUD de clientes
 router.post('/', crearCliente);
-router.put('/:id', actualizarCliente);
+router.post('/:id', actualizarCliente);
 router.delete('/:id', eliminarCliente);
 
 export default router;

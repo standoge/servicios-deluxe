@@ -9,6 +9,7 @@ import methodOverride from 'method-override';
 import session from 'express-session';
 
 // Endpoints
+import clientesRoutes from './modules/customers/customers.routes.js';
 import loginRoutes from './modules/login/login.routes.js';
 import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 import serviciosRoutes from './modules/services/services.routes.js';
@@ -66,6 +67,7 @@ app.use('/', loginRoutes);
 app.use('/usuarios', usersRoutes);
 
 // Protege todas las rutas de vehículos y servicios
+app.use('/clientes', requireAuth, clientesRoutes);
 app.use('/vehiculos', requireAuth, vehiculosRoutes);
 app.use('/servicios', requireAuth, serviciosRoutes);
 
