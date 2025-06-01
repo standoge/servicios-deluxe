@@ -1,1 +1,107 @@
-Esta es la lista de clientes
+
+<style>
+    .clientes-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .clientes-table th, .clientes-table td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+    .clientes-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #343a40;
+    }
+    .clientes-table tr:hover {
+        background: #e3f2fd;
+        transition: background 0.2s;
+    }
+    .btn {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+        background: #007bff;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
+    }
+    .btn-success {
+        background: #28a745;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+    .btn-primary {
+        background: #007bff;
+    }
+    .btn-warning {
+        background: #ffc107;
+        color: #343a40;
+    }
+    .btn-danger {
+        background: #dc3545;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+</style>
+{{> navbar }}
+<div class="container">
+    <h1>Clientes</h1>
+    <a href="/clientes/reporte" class="btn btn-warning" style="margin-bottom: 1rem; margin-right: 1rem;">
+       <span aria-hidden="true">&#128202;</span> Reportes
+    </a>
+    <a href="/clientes/form/add" class="btn btn-success">
+        <span aria-hidden="true">&#43;</span> Agregar Cliente
+    </a>
+    <table class="clientes-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each clientes}}
+            <tr>
+                <td>{{customer_id}}</td>
+                <td>{{name}}</td>
+                <td>{{phone}}</td>
+                <td>{{email}}</td>
+                <td>
+                    <a href="/clientes/form/{{this.customer_id}}" class="btn btn-primary" title="Editar">
+                        <span aria-hidden="true">&#9998;</span> Editar
+                    </a>
+                    <form action="/clientes/{{this.customer_id}}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este cliente?');" title="Eliminar">
+                            <span aria-hidden="true">&#128465;</span> Eliminar
+                        </button>
+                        <input type="hidden" name="_method" value="DELETE">
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+    

@@ -1,1 +1,264 @@
-Este es el formulario de servicios
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{titulo}} - Sistema de Servicios</title>
+    <link rel="stylesheet" href="/services/form/form.css">
+</head>
+<body>
+    {{> navbar }}
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>{{titulo}}</h1>
+            <p>Complete todos los campos requeridos para {{#if servicio.id}}actualizar{{else}}registrar{{/if}} el servicio</p>
+        </div>
+                
+        <!-- Formulario -->
+        <div class="form-container">
+            <form id="servicioForm" action="{{accion}}" method="POST">
+                <!-- Botones de Acción -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="goBackToList">
+                        <span class="btn-icon">←</span>
+                        Cancelar
+                    </button>
+                        
+                    <button type="submit"  class="btn btn-primary" id="submitBtn">
+                        <span class="btn-icon">💾</span>
+                        {{#if servicio.id}}Actualizar Servicio{{else}}Guardar Servicio{{/if}}
+                    </button>
+                </div>
+                <!-- Información del Vehículo -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <span class="section-icon">🚗</span>
+                        Información del Vehículo
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="vehiculo.placa" class="required">Placa del Vehículo</label>
+                            <input 
+                                type="text" 
+                                id="vehiculo.placa" 
+                                name="vehiculo[placa]" 
+                                value="{{servicio.vehiculo.placa}}"
+                                placeholder="ABC-123"
+                                title="Formato: ABC123"
+                                maxlength="6"
+                                autocomplete="off"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vehiculo.marca" class="required">Marca</label>
+                            <select id="vehiculo.marca" name="vehiculo[marca]" required>
+                                <option value="">Seleccione una marca</option>
+                                <option value="Toyota" {{#if (eq servicio.vehiculo.marca "Toyota")}}selected{{/if}}>Toyota</option>
+                                <option value="Honda" {{#if (eq servicio.vehiculo.marca "Honda")}}selected{{/if}}>Honda</option>
+                                <option value="Nissan" {{#if (eq servicio.vehiculo.marca "Nissan")}}selected{{/if}}>Nissan</option>
+                                <option value="Chevrolet" {{#if (eq servicio.vehiculo.marca "Chevrolet")}}selected{{/if}}>Chevrolet</option>
+                                <option value="Ford" {{#if (eq servicio.vehiculo.marca "Ford")}}selected{{/if}}>Ford</option>
+                                <option value="Hyundai" {{#if (eq servicio.vehiculo.marca "Hyundai")}}selected{{/if}}>Hyundai</option>
+                                <option value="Kia" {{#if (eq servicio.vehiculo.marca "Kia")}}selected{{/if}}>Kia</option>
+                                <option value="Mazda" {{#if (eq servicio.vehiculo.marca "Mazda")}}selected{{/if}}>Mazda</option>
+                                <option value="Volkswagen" {{#if (eq servicio.vehiculo.marca "Volkswagen")}}selected{{/if}}>Volkswagen</option>
+                                <option value="Renault" {{#if (eq servicio.vehiculo.marca "Renault")}}selected{{/if}}>Renault</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vehiculo.modelo" class="required">Modelo</label>
+                            <input 
+                                type="text" 
+                                id="vehiculo.modelo" 
+                                name="vehiculo[modelo]" 
+                                value="{{servicio.vehiculo.modelo}}"
+                                placeholder="Corolla"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vehiculo.anio" class="required">Año</label>
+                            <input 
+                                type="number" 
+                                id="vehiculo.anio" 
+                                name="vehiculo[anio]" 
+                                value="{{servicio.vehiculo.anio}}"
+                                min="1990" 
+                                max="2025"
+                                minlength="4"
+                                maxlength="4"
+                                placeholder="2020"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del Servicio -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <span class="section-icon">🔧</span>
+                        Información del Servicio
+                    </h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="tipoServicio" class="required">Tipo de Servicio</label>
+                            <select id="tipoServicio" name="tipoServicio" required>
+                                <option value="">Seleccione el tipo de servicio</option>
+                                <option value="Cambio de aceite" {{#if (eq servicio.tipoServicio "Cambio de aceite")}}selected{{/if}}>Cambio de aceite</option>
+                                <option value="Revisión de frenos" {{#if (eq servicio.tipoServicio "Revisión de frenos")}}selected{{/if}}>Revisión de frenos</option>
+                                <option value="Mantenimiento general" {{#if (eq servicio.tipoServicio "Mantenimiento general")}}selected{{/if}}>Mantenimiento general</option>
+                                <option value="Cambio de llantas" {{#if (eq servicio.tipoServicio "Cambio de llantas")}}selected{{/if}}>Cambio de llantas</option>
+                                <option value="Revisión de motor" {{#if (eq servicio.tipoServicio "Revisión de motor")}}selected{{/if}}>Revisión de motor</option>
+                                <option value="Sistema eléctrico" {{#if (eq servicio.tipoServicio "Sistema eléctrico")}}selected{{/if}}>Sistema eléctrico</option>
+                                <option value="Aire acondicionado" {{#if (eq servicio.tipoServicio "Aire acondicionado")}}selected{{/if}}>Aire acondicionado</option>
+                                <option value="Transmisión" {{#if (eq servicio.tipoServicio "Transmisión")}}selected{{/if}}>Transmisión</option>
+                                <option value="Suspensión" {{#if (eq servicio.tipoServicio "Suspensión")}}selected{{/if}}>Suspensión</option>
+                                <option value="Otro" {{#if (eq servicio.tipoServicio "Otro")}}selected{{/if}}>Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estado" class="required">Estado</label>
+                            <select id="estado" name="estado" required>
+                                <option value="programado" {{#if (eq servicio.estado "programado")}}selected{{/if}}>Programado</option>
+                                <option value="urgente" {{#if (eq servicio.estado "urgente")}}selected{{/if}}>Urgente</option>
+                                <option value="completado" {{#if (eq servicio.estado "completado")}}selected{{/if}}>Completado</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fechaServicio" class="required">Fecha del Servicio</label>
+                            <input 
+                                type="date" 
+                                id="fechaServicio" 
+                                name="fechaServicio" 
+                                value="{{servicio.fechaServicio}}"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="horaServicio" class="required">Hora del Servicio</label>
+                            <input 
+                                type="time" 
+                                id="horaServicio" 
+                                name="horaServicio" 
+                                value="{{servicio.horaServicio}}"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duracionEstimada">Duración Estimada</label>
+                            <select id="duracionEstimada" name="duracionEstimada">
+                                <option value="">Seleccione duración</option>
+                                <option value="0.5 horas" {{#if (eq servicio.duracionEstimada "0.5 horas")}}selected{{/if}}>30 minutos</option>
+                                <option value="1 hora" {{#if (eq servicio.duracionEstimada "1 hora")}}selected{{/if}}>1 hora</option>
+                                <option value="1.5 horas" {{#if (eq servicio.duracionEstimada "1.5 horas")}}selected{{/if}}>1.5 horas</option>
+                                <option value="2 horas" {{#if (eq servicio.duracionEstimada "2 horas")}}selected{{/if}}>2 horas</option>
+                                <option value="3 horas" {{#if (eq servicio.duracionEstimada "3 horas")}}selected{{/if}}>3 horas</option>
+                                <option value="4 horas" {{#if (eq servicio.duracionEstimada "4 horas")}}selected{{/if}}>4 horas</option>
+                                <option value="Todo el día" {{#if (eq servicio.duracionEstimada "Todo el día")}}selected{{/if}}>Todo el día</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="costo" class="required">Costo ($)</label>
+                            <input 
+                                type="string" 
+                                id="costo" 
+                                name="costo" 
+                                value="{{servicio.costo}}"
+                                min="0" 
+                                step="0.01"
+                                placeholder="45000.00"
+                                required
+                            >
+                            <span class="form-help">Solo números, permite hasta 2 decimales</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mecanico">Mecánico Asignado</label>
+                            <select id="mecanico" name="mecanico">
+                                <option value="">Seleccione un mecánico</option>
+                                <option value="Juan Pérez" {{#if (eq servicio.mecanico "Juan Pérez")}}selected{{/if}}>Juan Pérez</option>
+                                <option value="María García" {{#if (eq servicio.mecanico "María García")}}selected{{/if}}>María García</option>
+                                <option value="Carlos López" {{#if (eq servicio.mecanico "Carlos López")}}selected{{/if}}>Carlos López</option>
+                                <option value="Ana Rodríguez" {{#if (eq servicio.mecanico "Ana Rodríguez")}}selected{{/if}}>Ana Rodríguez</option>
+                                <option value="Pedro Martínez" {{#if (eq servicio.mecanico "Pedro Martínez")}}selected{{/if}}>Pedro Martínez</option>
+                                <option value="Laura Sánchez" {{#if (eq servicio.mecanico "Laura Sánchez")}}selected{{/if}}>Laura Sánchez</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción y Observaciones -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <span class="section-icon">📝</span>
+                        Detalles Adicionales
+                    </h3>
+                    
+                    <div class="form-grid full-width">
+                        <div class="form-group">
+                            <label for="descripcion">Descripción del Servicio</label>
+                            <textarea 
+                                id="descripcion" 
+                                name="descripcion" 
+                                rows="3"
+                                placeholder="Descripción detallada del servicio a realizar..."
+                            >{{servicio.descripcion}}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="observaciones">Observaciones</label>
+                            <textarea 
+                                id="observaciones" 
+                                name="observaciones" 
+                                rows="3"
+                                placeholder="Observaciones adicionales, notas especiales..."
+                            >{{servicio.observaciones}}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal de Confirmación -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Confirmar Acción</h3>
+                    <span class="modal-close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmMessage">¿Está seguro de que desea guardar este servicio?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelConfirm">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmSubmit">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Guardando servicio...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/services/form/form.js"></script>
+</body>
+</html>

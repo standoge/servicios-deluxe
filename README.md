@@ -15,7 +15,7 @@ pnpm sequelize-auto -o "./src/models" -d railway -h host -u postgres -x pasword 
 ```
 
 > [!NOTE]
-> Se debe de reemplazar los archivos de .js generados a .cjs para ser usados (revisar como se usa en init-models.cjs) 
+> Se debe de reemplazar los archivos de .js generados a .cjs para ser usados (revisar como se usa en init-models.cjs y users.cjs respectivamente) 
 
 # Configuraciones por defecto
 
@@ -33,7 +33,10 @@ pnpm sequelize-auto -o "./src/models" -d railway -h host -u postgres -x pasword 
 | DB_DATABASE| Nombre de la base de datos   |
 | DB_PASSWORD| Contraseña de acceso         |
 | DB_PORT | Puerto de conexión           |
+| PORT | Puerto del servidor web (aplicación) |
+| SESSION_SECRET | Oración secreta usada para firmar el contenido del session-cookie que almacena el cliente |
 
 # Convenciones
 
 - Variables, constantes, funciones y métodos en camelCase e Inglés.
+- Endpoints en plural, snake_case y español.
