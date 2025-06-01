@@ -84,6 +84,54 @@ const eliminarCliente = async (req, res) => {
     }
 };
 
+const formularioClienteNuevo = async (req, res) => {
+    try {
+        const datosVista = { 
+                accion: '/clientes',
+                metodo: 'POST',
+                cliente: {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    location: '',
+                    comments: '',
+                }
+        };
+
+        return res.render('customers/form', datosVista);
+    } catch (error) {
+        console.log('Error al mostrar formulario nuevo', error);
+        res.status(500).render('error', { 
+            message: "Error al mostrar formulario nuevo",
+            error: error
+        });
+    }
+};
+
+const formularioClienteEdicion = async (req, res) => {
+    try {
+        const cliente = await getCustomerById(req.params.id);
+        if (!cliente) {
+            return res.status(404).render('error', { 
+                message: "Cliente no encontrado"
+            });
+        }
+
+        const datosVista = { 
+                cliente,
+                accion: '/clientes/${id}',
+                metodo: 'POST',
+        };
+        return res.render('customers/form', datosVista);
+    } catch (error) {
+        console.log('Error al mostrar formulario de edición', error);
+        res.status(500).render('error', { 
+            message: "Error al mostrar formulario de edición",
+            error: error
+        });
+    }
+};
+
 const generarReporte = async (req, res) => {
     try {
         // Obtener los datos de la base de datos
@@ -140,5 +188,7 @@ export {
     crearCliente,
     actualizarCliente,
     eliminarCliente,
+    formularioClienteNuevo,
+    formularioClienteEdicion,
     generarReporte
 };

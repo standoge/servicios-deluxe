@@ -6,6 +6,8 @@ import {
     listarClientes,
     actualizarCliente,
     eliminarCliente,
+    formularioClienteNuevo,
+    formularioClienteEdicion,
     generarReporte
 } from './customers.controller.js';
 
@@ -13,6 +15,8 @@ const router = express.Router();
 
 // Rutas para la interfaz web
 router.get('/list', listarClientes);
+router.get('/form/add', formularioClienteNuevo);
+router.get('/form/:id', formularioClienteEdicion);
 router.get('/reporte', generarReporte);
 
 // Rutas para el CRUD de clientes
