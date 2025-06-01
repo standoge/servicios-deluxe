@@ -3,13 +3,15 @@ import {
   crearVehiculo,
   listarVehiculos,
   actualizarVehiculo,
-  eliminarVehiculo
+  eliminarVehiculo,
+  generarReporte
 } from './vehicles.controller.js';
 
 const router = express.Router();
 
 // Rutas para la interfaz web
 router.get('/list/', listarVehiculos)
+router.get('/reporte', generarReporte);
 
 // Rutas para CRUD 
 router.post('/', crearVehiculo);

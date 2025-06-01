@@ -1,7 +1,53 @@
+<style>
+    .vehiculos-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .vehiculos-table th, .vehiculos-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .vehiculos-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #343a40;
+    }
+    .vehiculos-table tr:hover {
+        background: #e3f2fd;
+        transition: background 0.2s;
+    }
+    .btn {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+        background: #007bff;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .btn-success {
+        background: #28a745;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+    .btn-primary {
+        background: #007bff;
+    }
+</style>
+{{> navbar }}
 <div class="container">
     <h1>Vehículos</h1>
+    <a href="/vehiculos/reporte" class="btn btn-warning" style="margin-bottom: 1rem; margin-right: 1rem;">Reportes</a>
     <a href="/vehiculos/form/add" class="btn btn-success">Agregar Vehículo</a>
-    <table class="table">
+    <table class="vehiculos-table">
         <thead>
             <tr>
                 <th>Placa</th>
@@ -26,7 +72,10 @@
                 <td>{{this.estado}}</td>
                 <td>
                     <a href="/vehiculos/form/{{this.id_vehiculo}}" class="btn btn-primary">Editar</a>
-                    <!-- Aquí puedes agregar botón de eliminar si lo deseas -->
+                    <form action="/vehiculos/{{this.id_vehiculo}}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este vehículo?');" style="background:#dc3545; margin-left:4px;">Eliminar</button>
+                        <input type="hidden" name="_method" value="DELETE">
+                    </form>
                 </td>
             </tr>
             {{/each}}
