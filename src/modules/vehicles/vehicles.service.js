@@ -10,7 +10,10 @@ const Vehicle = models.vehicles;
 
 const createVehicle = async (vehicleData) => Vehicle.create(vehicleData);
 
-const getAllVehicles = async () => Vehicle.findAll();
+const getAllVehicles = async () => Vehicle.findAll({
+  attributes: ['vehicle_id', 'placa', 'marca', 'modelo', 'anio'],
+  order: [['placa', 'ASC']]
+});
 
 const getVehicleById = async (id) => Vehicle.findByPk(id);
 

@@ -65,8 +65,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="cliente_id">Identificación</label>
-                                <input type="text" id="cliente_id"
-                                    name="nuevo_cliente[identificacion]">
+                                <input type="text" id="cliente_id" name="nuevo_cliente[identificacion]">
                             </div>
                             <div class="form-group">
                                 <label for="nuevo_cliente_telefono">Teléfono</label>
@@ -87,18 +86,17 @@
                         Información del Vehículo
                     </h3>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="vehiculo_id" class="required">Vehículo</label>
-                            <select id="vehiculo_id" name="vehiculo_id" required>
-                                <option value="">Seleccione un vehículo</option>
-                                {{#each vehiculos}}
-                                <option value="{{this.id}}" {{#if (eq this.id ../viaje.vehiculo_id)}}selected{{/if}}>
-                                    {{this.placa}} - {{this.marca}} {{this.modelo}}
-                                </option>
-                                {{/each}}
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label for="vehiculo_id" class="required">Vehículo</label>
+                        <select id="vehiculo_id" name="vehicle_id" required>
+                            <option value="">Seleccione un vehículo</option>
+                            {{#each vehiculos}}
+                            <option value="{{this.vehicle_id}}" {{#if (eq this.vehicle_id
+                                ../viaje.vehicle_id)}}selected{{/if}}>
+                                {{this.placa}} - {{this.marca}} {{this.modelo}} ({{this.anio}})
+                            </option>
+                            {{/each}}
+                        </select>
                     </div>
                 </div>
 

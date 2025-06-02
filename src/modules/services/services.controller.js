@@ -24,9 +24,9 @@ const registerHandlebarsHelpers = () => ({
     formatNumber: function (number) {
         return number.toLocaleString();
     },
-     ifeq: function (a, b, options) {
-            return a === b ? options.fn(this) : options.inverse(this);
-        }
+    ifeq: function (a, b, options) {
+        return a === b ? options.fn(this) : options.inverse(this);
+    },
 });
 
 // Función para generar el calendario
@@ -51,11 +51,17 @@ const generarCalendario = (mes, anio, servicios) => {
     // Días del mes actual
     for (let dia = 1; dia <= diasEnMes; dia++) {
         const fechaCompleta = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-        const serviciosDelDia = servicios.filter(s => s.fecha_servicio === fechaCompleta)
-            .map(servicio => ({
-                ...servicio,
-                costoFormateado: servicio.costo.toLocaleString()
-            }));
+
+        const serviciosDelDia = servicios.filter(s => {
+            // Asegurar que la fecha del servicio esté en formato YYYY-MM-DD
+            const fechaServicio = new Date(s.fecha_servicio);
+            const fechaServicioFormateada = `${fechaServicio.getFullYear()}-${String(fechaServicio.getMonth() + 1).padStart(2, '0')}-${String(fechaServicio.getDate()).padStart(2, '0')}`;
+            return fechaServicioFormateada === fechaCompleta;
+        }).map(servicio => ({
+            ...servicio.toJSON(),
+            costoFormateado: servicio.costo.toLocaleString(),
+            vehiculos: servicio.vehiculos ? servicio.vehiculos.toJSON() : { placa: 'N/A' }
+        }));
 
         dias.push({
             numero: dia,
@@ -73,7 +79,6 @@ const generarCalendario = (mes, anio, servicios) => {
             servicios: []
         });
     }
-
     return dias;
 };
 
@@ -112,7 +117,11 @@ const listarServicios = async (req, res) => {
         const estadisticas = {
             totalServicios: servicios.length,
             serviciosMes: serviciosMes.length,
-            costoTotal: serviciosMes.reduce((total, s) => total + s.costo, 0).toLocaleString(),
+            costoTotal: serviciosMes.reduce((total, s) => {
+                // Convertir el costo a número (float) antes de sumar
+                const costoNumerico = parseFloat(s.costo) || 0;
+                return total + costoNumerico;
+            }, 0).toLocaleString(),
             vehiculosActivos: new Set(servicios.map(s => s.vehiculos?.placa).filter(Boolean)).size
         };
 
@@ -131,9 +140,9 @@ const listarServicios = async (req, res) => {
         const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
             'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-        // Preparar datos para la vista
-        const datosVista = {
-            servicios,
+        res.render('viajes/list', {
+            servicios: [],
+            nonce: res.locals.nonce,
             vehiculos: vehiculosUnicos,
             estadisticas,
             diasCalendario,
@@ -141,10 +150,11 @@ const listarServicios = async (req, res) => {
             anioActual,
             mesNombre: meses[mesActual],
             aniosDisponibles,
-            serviciosJSON: JSON.stringify(servicios) // Para pasar al cliente
-        };
-
-        res.render('viajes/list', datosVista);
+            serviciosJSON: JSON.stringify(servicios.map(s => ({
+                ...s.toJSON(),
+                vehiculos: s.vehiculos ? s.vehiculos.toJSON() : null
+            })))
+        });
 
     } catch (error) {
         console.error('Error al listar servicios:', error);
@@ -158,21 +168,24 @@ const listarServicios = async (req, res) => {
 // Controlador para mostrar formulario de nuevo servicio
 const mostrarFormularioViaje = async (req, res) => {
     try {
+        // Obtener vehículos REALES de la base de datos
         const vehiculos = await getAllVehicles();
         const clientes = await getAllCustomers();
+
         const viaje = req.params.id ? await getServiceById(req.params.id) : null;
 
-        res.render('viajes/form', {  // Cambia 'services/form' a 'viajes/form'
+        res.render('viajes/form', {
             viaje,
-            vehiculos,
+            vehiculos, // Enviar los vehículos reales
             clientes,
             titulo: viaje ? 'Editar Viaje' : 'Nuevo Viaje',
-            accion: viaje ? `/viajes/actualizar/${viaje.id}` : '/viajes/crear',
-            metodo: 'POST'
+            accion: viaje ? `/viajes/${viaje.id}` : '/viajes',
+            metodo: viaje ? 'PUT' : 'POST'
         });
     } catch (error) {
+        console.error('Error:', error);
         res.status(500).render('error', {
-            message: "Error al cargar el formulario de viaje",
+            message: "Error al cargar el formulario",
             error: error
         });
     }
@@ -182,28 +195,39 @@ const mostrarFormularioViaje = async (req, res) => {
 const mostrarFormularioEdicion = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
+        const vehiculos = await getAllVehicles();
+        const clientes = await getAllCustomers();
+        const viaje = await getServiceById(id);
 
-        const servicio = await getServiceById(id);
-
-        if (!servicio) {
+        if (!viaje) {
             return res.status(404).render('error', {
-                message: 'Servicio no encontrado'
+                message: 'Viaje no encontrado'
             });
         }
 
-        const datosVista = {
-            titulo: 'Editar Servicio',
-            accion: `/servicios/${id}`,
-            metodo: 'PUT',
-            servicio
-        };
-
-        res.render('viajes/form', datosVista);
+        // Debug: Ver los datos del viaje
+        res.render('viajes/form', {
+            viaje: {
+                ...viaje.toJSON(),
+                // Asegura que estos campos existan
+                origen: viaje.origen || '',
+                destino: viaje.destino || '',
+                // Formatea la fecha para el input datetime-local
+                fecha_salida: viaje.fecha_servicio && viaje.hora_servicio
+                    ? `${viaje.fecha_servicio}T${viaje.hora_servicio}`
+                    : ''
+            },
+            vehiculos,
+            clientes,
+            titulo: 'Editar Viaje',
+            accion: `/viajes/${id}`,
+            metodo: 'POST'
+        });
 
     } catch (error) {
-        console.error('Error al cargar servicio para edición:', error);
+        console.error('Error al cargar viaje para edición:', error);
         res.status(500).render('error', {
-            message: 'Error al cargar el servicio',
+            message: 'Error al cargar el viaje',
             error: error
         });
     }
@@ -212,33 +236,43 @@ const mostrarFormularioEdicion = async (req, res) => {
 // Controlador para crear nuevo servicio
 const crearServicio = async (req, res) => {
     try {
+        // Validación mejorada
+        if (!req.body.vehicle_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Debe seleccionar un vehículo'
+            });
+        }
+
+        if (!req.body.customer_id || req.body.customer_id === 'nuevo') {
+            return res.status(400).json({
+                success: false,
+                message: 'Debe seleccionar un cliente existente o crear uno nuevo'
+            });
+        }
+
+        // Mapeo de datos
         const nuevoServicio = {
-            ...req.body,
             vehicle_id: parseInt(req.body.vehicle_id),
-            costo: parseFloat(req.body.costo)
+            customer_id: parseInt(req.body.customer_id),
+            tipo_servicio: 'Viaje',
+            fecha_servicio: req.body.fecha_salida?.split('T')[0] || new Date().toISOString().split('T')[0],
+            hora_servicio: req.body.fecha_salida?.split('T')[1] || '08:00',
+            origen: req.body.origen,
+            destino: req.body.destino,
+            costo: parseFloat(req.body.costo) || 0,
+            estado: req.body.estado || 'programado',
+            observaciones: req.body.observaciones
         };
 
         await createService(nuevoServicio);
-
-        // Si la petición es AJAX (fetch), responde con JSON
-        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
-            return res.status(200).json({ success: true, message: 'Servicio guardado exitosamente' });
-        }
-
-        // Si es un form tradicional, redirige
         res.redirect('/viajes/list?success=created');
 
     } catch (error) {
-        console.error('Error al crear servicio:', error);
-
-        // Si la petición es AJAX (fetch), responde con JSON de error
-        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
-            return res.status(400).json({ success: false, message: error.message || 'Error al crear el servicio' });
-        }
-
-        res.status(500).render('error', {
-            message: 'Error al crear el servicio',
-            error: error
+        console.error('Error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Error al crear el servicio'
         });
     }
 };
@@ -253,7 +287,21 @@ const actualizarServicio = async (req, res) => {
             return res.status(404).json({ message: 'Servicio no encontrado' });
         }
 
-        await updateService(id, req.body);
+        // Mapeo completo de datos
+        const datosActualizados = {
+            vehicle_id: parseInt(req.body.vehicle_id),
+            customer_id: parseInt(req.body.customer_id),
+            tipo_servicio: 'Viaje',
+            fecha_servicio: req.body.fecha_salida?.split('T')[0] || servicio.fecha_servicio,
+            hora_servicio: req.body.fecha_salida?.split('T')[1] || servicio.hora_servicio,
+            origen: req.body.origen,
+            destino: req.body.destino,
+            costo: parseFloat(req.body.costo) || 0,
+            estado: req.body.estado || servicio.estado,
+            observaciones: req.body.observaciones
+        };
+
+        await updateService(id, datosActualizados);
         res.redirect('/viajes/list?success=updated');
 
     } catch (error) {
@@ -309,7 +357,11 @@ const obtenerServiciosAPI = async (req, res) => {
             estadisticas: {
                 totalServicios: servicios.length,
                 serviciosMes: serviciosMes.length,
-                costoTotal: serviciosMes.reduce((total, s) => total + s.costo, 0),
+                costoTotal: serviciosMes.reduce((total, s) => {
+                    // Convertir el costo a número (float) antes de sumar
+                    const costoNumerico = parseFloat(s.costo) || 0;
+                    return total + costoNumerico;
+                }, 0).toLocaleString(),
                 vehiculosActivos: new Set(servicios.map(s => s.vehiculos?.placa).filter(Boolean)).size
             }
         });

@@ -211,7 +211,6 @@ router.delete('/:id',requireAuth ,async (req, res) => {
 router.get('/cambiar-contra', requireAuth, (req, res) => {
 
     const cliente = {...req.session.user, user_id: req.session.user.id};
-    console.log(cliente);
     res.render('login/cambiarcontra',cliente);
 });
 

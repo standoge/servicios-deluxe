@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     document.querySelectorAll('.btn-delete-customer').forEach(btn => {
-        console.log('Botón de eliminación encontrado:', btn);
         btn.addEventListener('click', function() {
             const customerId = this.getAttribute('data-id');
             if (confirm("¿Seguro que deseas eliminar este cliente?")) {

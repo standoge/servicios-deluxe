@@ -18,7 +18,6 @@ const listarClientes = async (req, res) => {
         };
         res.render('customers/list', datosVista);
     } catch (error) {
-        console.log('Error al listar clientes', error);
         res.status(500).render('error', {
             message: "Error al listar clientes",
             error: error

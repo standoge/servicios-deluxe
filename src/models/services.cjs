@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('services', {
     id: {
       autoIncrement: true,
@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'vehicles',
+        model: 'vehiculos',
         key: 'vehicle_id'
       }
     },
@@ -53,6 +53,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     observaciones: {
       type: DataTypes.TEXT,
+      allowNull: true
+    },
+    origen: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    destino: {
+      type: DataTypes.STRING(255),
       allowNull: true
     }
   }, {

@@ -14,8 +14,8 @@ router.get('/nuevo', mostrarFormularioViaje);
 router.get('/editar/:id', mostrarFormularioEdicion);
 
 // Rutas para CRUD
-router.post('/crear', crearServicio);
-router.post('/actualizar/:id', actualizarServicio);
-router.delete('/eliminar/:id', eliminarServicio);
+router.post('/', crearServicio);
+router.post('/:id', actualizarServicio);
+router.delete('/:id', eliminarServicio);
 
 export default router;

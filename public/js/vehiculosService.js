@@ -6,10 +6,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Manejo de eliminación por fetch
     document.querySelectorAll('.btn-eliminar-vehiculo').forEach(btn => {
-        console.log('Botón de eliminación encontrado:', btn);
         btn.addEventListener('click', async function(e) {
             e.preventDefault();
-            console.log('Eliminación manejada por archivo externo [DEV]');
             const id = this.dataset.id;
             if (!id) return;
             if (!confirm('¿Seguro que deseas eliminar este vehículo?')) return;
@@ -34,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 async function handleVehicleSubmit(e) {
     e.preventDefault();
-    console.log('Submit manejado por archivo externo.');
     const form = e.target;
     const data = Object.fromEntries(new FormData(form).entries());
     // Convierte seguro_vigente a booleano

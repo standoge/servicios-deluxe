@@ -22,19 +22,28 @@ function cargarDatosDelServidor() {
     try {
         const scriptElement = document.getElementById('serviciosData');
         if (scriptElement) {
-            servicios = JSON.parse(scriptElement.textContent);
+            let rawData = scriptElement.textContent.replace(/<\/?[^>]+(>|$)/g, "").trim();
+            servicios = JSON.parse(rawData);
+            
+            // Aseguramos que las fechas tengan formato correcto
+            servicios.forEach(s => {
+                if (s.fecha_servicio) {
+                    const d = new Date(s.fecha_servicio);
+                    // Forzamos formato YYYY-MM-DD
+                    s.fecha_servicio = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                }
+            });
         }
-        
-        // Actualizar el calendario después de cargar los datos
         actualizarCalendario();
         actualizarEstadisticas();
     } catch (error) {
-        console.error('Error al cargar datos del servidor:', error);
+        console.error('Error cargando datos:', error);
+        servicios = [];
     }
 }
 
 function editarServicio(id) {
-    window.location.href = `/servicios/form/${id}`;
+    window.location.href = `/viajes/editar/${id}`;
 }
 
 function filtrarServicios() {
@@ -171,24 +180,34 @@ function crearCeldaDia(numeroDia, otroMes) {
 }
 
 function obtenerServiciosDelDia(fecha) {
+    // Ajuste de fecha: suma 1 día para compensar la zona horaria
+    const fechaAjustada = new Date(fecha);
+    fechaAjustada.setDate(fechaAjustada.getDate() - 1);
+    const fechaComparar = fechaAjustada.toISOString().split('T')[0];
+    
     return servicios.filter(servicio => {
-        if (vehiculoFiltro && servicio.vehicle.placa !== vehiculoFiltro) {
+        if (vehiculoFiltro && servicio.vehiculos?.placa !== vehiculoFiltro) {
             return false;
         }
-        return servicio.fecha_servicio === fecha;
+        // Comparación directa con fecha ajustada
+        return servicio.fecha_servicio === fechaComparar;
     });
 }
 
 function crearItemServicio(servicio) {
     const item = document.createElement('div');
     item.className = `service-item ${servicio.estado}`;
-    item.onclick = () => editarServicio(servicio.id);
     
     item.innerHTML = `
-        <div class="service-vehicle">${servicio.vehicle.placa}</div>
+        <div class="service-vehicle">${servicio.vehiculos?.placa || 'Sin vehículo'}</div>
         <div class="service-type">${servicio.tipo_servicio}</div>
-        <div class="service-cost">$${servicio.costo.toLocaleString()}</div>
+        <div class="service-cost">$${(servicio.costo || 0).toLocaleString()}</div>
     `;
+    
+    // Asignar el evento correctamente
+    item.addEventListener('click', () => {
+        window.location.href = `/viajes/editar/${servicio.id}`;
+    });
     
     return item;
 }
@@ -207,7 +226,7 @@ function actualizarEstadisticas() {
     });
 
     const costoTotal = serviciosMes.reduce((total, servicio) => total + servicio.costo, 0);
-    const vehiculosUnicos = new Set(serviciosFiltrados.map(s => s.vehicle.placa));
+    const vehiculosUnicos = new Set(serviciosFiltrados.map(s => s.vehiculos.placa));
 
     const totalElement = document.getElementById('totalServicios');
     const mesElement = document.getElementById('serviciosMes');
@@ -235,4 +254,5 @@ function actualizarFiltros(nuevosServicios, nuevoMes, nuevoAnio, nuevoVehiculo) 
     // Actualizar vista
     actualizarCalendario();
     actualizarEstadisticas();
+
 }
