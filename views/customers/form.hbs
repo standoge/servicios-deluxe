@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="/clientes/form/form.css" />
 </head>
 <body>
+	    {{> navbar }}
 	<div class="container">
 
 		<div class="header">
@@ -21,13 +22,13 @@
 				<div class="form-grid">
 
 					<div class="form-group">
-						<label for="name" class="required">Nombre</label>
-						<input type="text" id="name" name="name" value="{{cliente.name}}" required />
+						<label for="name" class="required">Nombres</label>
+						<input type="text" id="name" name="name" value="{{cliente.nombre}}" required />
 					</div>
 
 					<div class="form-group">
-						<label for="lastname" class="required">Apellido</label>
-						<input type="text" id="lastname" name="lastname" value="{{cliente.lastname}}" required />
+						<label for="lastname" class="required">Apellidos</label>
+						<input type="text" id="lastname" name="lastname" value="{{cliente.apellido}}" required />
 					</div>
 
 					<div class="form-group">
@@ -66,26 +67,12 @@
 
 			<!-- Botones de Acción -->
 			<div class="form-actions">
-				<button type="button" class="btn btn-secondary" id="goBackToList">
-					<span class="btn-icon">←</span> Regresar
-				</button>
-
+				<a href="/clientes/list"  type="button" class="btn btn-secondary" id="cancelConfirm">Cancelar</a>
 				<button type="submit" class="btn btn-primary" id="submitBtn">
 					<span class="btn-icon">💾</span>
 					{{#if cliente.customer_id}}Actualizar Cliente{{else}}Guardar Cliente{{/if}}
 				</button>
 			</div>
-
-			<script>
-				document.addEventListener('DOMContentLoaded', function () {
-					const goBackBtn = document.getElementById('goBackToList');
-					if (goBackBtn) {
-						goBackBtn.addEventListener('click', function () {
-							window.location.href = 'http://localhost:3000/clientes/list/';
-						});
-					}
-				});
-			</script>
 
 		</form>
 

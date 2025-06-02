@@ -1,4 +1,3 @@
-
 <style>
     .clientes-table {
         width: 100%;
@@ -83,8 +82,8 @@
         </thead>
         <tbody>
             {{#each clientes}}
-            <tr>
-                <td>{{dui}}</td>
+            <tr id="row-{{customer_id}}">
+                <td>{{customer_id}}</td>
                 <td>{{name}}</td>
                 <td>{{lastname}}</td>
                 <td>{{phone}}</td>
@@ -93,16 +92,14 @@
                     <a href="/clientes/form/{{this.customer_id}}" class="btn btn-primary" title="Editar">
                         <span aria-hidden="true">&#9998;</span> Editar
                     </a>
-                    <form action="/clientes/{{this.customer_id}}?_method=DELETE" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este cliente?');" title="Eliminar">
-                            <span aria-hidden="true">&#128465;</span> Eliminar
-                        </button>
-                        <input type="hidden" name="_method" value="DELETE">
-                    </form>
+                    <button type="button" class="btn btn-danger btn-delete-customer" data-id="{{this.customer_id}}" title="Eliminar">
+                        <span aria-hidden="true">&#128465;</span> Eliminar
+                    </button>
                 </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
+<script src="/clientes/list/list.js"></script>
 

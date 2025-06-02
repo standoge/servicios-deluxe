@@ -15,6 +15,7 @@ import vehiculosRoutes from './modules/vehicles/vehicles.routes.js';
 import serviciosRoutes from './modules/services/services.routes.js';
 // import mantenimientoRoutes from './modules/mantenimiento/mantenimiento.routes.js';
 import usersRoutes from './modules/users/users.routes.js';
+import customerRoutes from './modules/customers/customers.routes.js';
 import {registerHandlebarsHelpers} from './modules/services/services.controller.js'
 
 
@@ -72,6 +73,7 @@ app.use('/', loginRoutes);
 // Protege todas las rutas de vehículos y servicios
 app.use('/clientes', requireAuth, clientesRoutes);
 app.use('/vehiculos', requireAuth, vehiculosRoutes);
+app.use('/customers', requireAuth, customerRoutes);
 // app.use('/servicios', requireAuth, mantenimientoRoutes);
 app.use('/viajes',serviciosRoutes);
 

@@ -1,4 +1,3 @@
-
 // customers.controller.js
 
 import {
@@ -30,16 +29,29 @@ const listarClientes = async (req, res) => {
 // Controlador para crear un cliente
 const crearCliente = async (req, res) => {
     try {
+        // Construir el objeto nuevoCliente a partir de req.body
         const nuevoCliente = {
             ...req.body
+            // Si necesitas convertir campos (p.ej., números) hazlo aquí
+            // ejemplo: edad: parseInt(req.body.edad),
         };
+
+        // Llamada al servicio para crear el cliente en la base de datos
         await createCustomer(nuevoCliente);
-        res.redirect('/clientes/list?success=created');
+
+        // Si la petición es AJAX (fetch con JSON), responde con JSON
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            return res.status(200).json({ success: true, message: 'Cliente guardado exitosamente' });
+        }
 
     } catch (error) {
-        console.log('Error al crear cliente', error);
+        console.error('Error al crear cliente:', error);
+        // Respuesta JSON en caso de error para peticiones AJAX
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            return res.status(400).json({ success: false, message: error.message || 'Error al crear el cliente' });
+        }
         res.status(500).render('error', {
-            message: "Error al crear cliente",
+            message: 'Error al crear cliente',
             error: error
         });
     }
@@ -67,21 +79,18 @@ const actualizarCliente = async (req, res) => {
 // Controlador para eliminar un cliente
 const eliminarCliente = async (req, res) => {
     try {
-        const id = req.params.id;
-
-        const indice = await getCustomerById(id);
-        if (indice !== -1) {
-            await deleteCustomer(id);
+        const id = parseInt(req.params.id);
+        // Busca cliente y realiza la eliminación (implementación específica en tu servicio)
+        const clienteEncontrado = await deleteCustomer(id);
+        if(clienteEncontrado) {
+            // await deleteClient(id);
+            return res.status(200).json({ success: true, message: "Cliente eliminado correctamente" });
+        } else {
+            return res.status(404).json({ success: false, message: "Cliente no encontrado" });
         }
-
-        res.redirect('/clientes/list?success=deleted');
-
     } catch (error) {
-        console.log('Error al eliminar cliente', error);
-        res.status(500).render('error', { 
-            message: "Error al eliminar cliente",
-            error: error
-        });
+        console.error('Error al eliminar cliente: ', error);
+        return res.status(500).json({ success: false, message: "Error al eliminar cliente", error: error.message || error });
     }
 };
 
