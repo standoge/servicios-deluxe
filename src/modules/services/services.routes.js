@@ -9,13 +9,13 @@ import {
 } from './services.controller.js'
 const router = express.Router();
 // Rutas para la interfaz web
-router.get('/list/', listarServicios);
-router.get('/', mostrarFormularioViaje);
-// router.get('/form/:id', mostrarFormularioEdicion);
+router.get('/list', listarServicios);
+router.get('/nuevo', mostrarFormularioViaje);
+router.get('/editar/:id', mostrarFormularioEdicion);
 
 // Rutas para CRUD
-router.post('/', crearServicio);
-router.post('/:id', actualizarServicio);
-router.delete('/:id', eliminarServicio);
+router.post('/crear', crearServicio);
+router.post('/actualizar/:id', actualizarServicio);
+router.delete('/eliminar/:id', eliminarServicio);
 
 export default router;

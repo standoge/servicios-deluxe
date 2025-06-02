@@ -142,7 +142,7 @@ const listarServicios = async (req, res) => {
             serviciosJSON: JSON.stringify(servicios) // Para pasar al cliente
         };
 
-        res.render('services/list', datosVista);
+        res.render('viajes/list', datosVista);
 
     } catch (error) {
         console.error('Error al listar servicios:', error);
@@ -174,7 +174,7 @@ const mostrarFormularioNuevo = (req, res) => {
             }
         };
 
-        res.render('services/form', datosVista);
+        res.render('viajes/form', datosVista);
 
     } catch (error) {
         console.error('Error al mostrar formulario:', error);
@@ -205,7 +205,7 @@ const mostrarFormularioEdicion = async (req, res) => {
             servicio
         };
 
-        res.render('services/form', datosVista);
+        res.render('viajes/form', datosVista);
 
     } catch (error) {
         console.error('Error al cargar servicio para edición:', error);

@@ -1,4 +1,4 @@
-{{!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -21,7 +21,6 @@
         <!-- Formulario -->
         <div class="form-container">
             <form id="viajeForm" action="{{accion}}" method="POST">
-                <input type="hidden" name="_method" value="{{metodo}}">
 
                 <!-- Botones de Acción -->
                 <div class="form-actions">
@@ -65,8 +64,8 @@
                                 <input type="text" id="nuevo_cliente_nombre" name="nuevo_cliente[nombre]">
                             </div>
                             <div class="form-group">
-                                <label for="nuevo_cliente_identificacion">Identificación</label>
-                                <input type="text" id="nuevo_cliente_identificacion"
+                                <label for="cliente_id">Identificación</label>
+                                <input type="text" id="cliente_id"
                                     name="nuevo_cliente[identificacion]">
                             </div>
                             <div class="form-group">
@@ -204,4 +203,4 @@
     <script src="/services/form/form.js"></script>
 </body>
 
-</html> --}}
+</html>

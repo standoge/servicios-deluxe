@@ -9,75 +9,92 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeForm();
     setupEventListeners();
     setupValidation();
+    setupClienteFields();
 });
 
 // Inicializar formulario
 function initializeForm() {
-    const form = document.getElementById('servicioForm');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    // Determinar si estamos editando
+    const form = document.getElementById('viajeForm');
     isEditing = document.querySelector('input[name="id"]') !== null;
+
+    // Configurar fechas mínimas (hoy)
+    const fechaSalidaInput = document.getElementById('fecha_salida');
+    const fechaRegresoInput = document.getElementById('fecha_regreso');
+    const now = new Date();
+    const today = now.toISOString().slice(0, 16);
     
-    // Configurar fecha mínima (hoy)
-    const fechaInput = document.getElementById('fechaServicio');
-    const today = new Date().toISOString().split('T')[0];
-    fechaInput.min = today;
+    fechaSalidaInput.min = today;
     
-    // Si no hay fecha seleccionada, usar hoy
-    if (!fechaInput.value) {
-        fechaInput.value = today;
+    // Si no hay fecha seleccionada, usar ahora + 1 hora
+    if (!fechaSalidaInput.value) {
+        const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+        fechaSalidaInput.value = oneHourLater.toISOString().slice(0, 16);
     }
-    
-    // Configurar hora por defecto si no existe
-    const horaInput = document.getElementById('horaServicio');
-    if (!horaInput.value) {
-        const now = new Date();
-        const hour = String(now.getHours()).padStart(2, '0');
-        const minute = String(now.getMinutes()).padStart(2, '0');
-        horaInput.value = `${hour}:${minute}`;
-    }
-    
+
+    // Configurar evento para fecha de regreso
+    fechaSalidaInput.addEventListener('change', function() {
+        fechaRegresoInput.min = this.value;
+    });
+
     // Formatear campo de costo
     setupCostoField();
-    
-    // Auto-completar placa
-    setupPlacaField();
+}
+
+// Configurar campos de cliente
+function setupClienteFields() {
+    const clienteSelect = document.getElementById('cliente_id');
+    const nuevoClienteFields = document.getElementById('nuevoClienteFields');
+
+    clienteSelect.addEventListener('change', function() {
+        if (this.value === 'nuevo') {
+            nuevoClienteFields.style.display = 'block';
+            // Marcar campos como requeridos
+            document.querySelectorAll('#nuevoClienteFields input').forEach(input => {
+                input.required = true;
+            });
+        } else {
+            nuevoClienteFields.style.display = 'none';
+            // Quitar requerido de campos de nuevo cliente
+            document.querySelectorAll('#nuevoClienteFields input').forEach(input => {
+                input.required = false;
+            });
+        }
+    });
+
+    // Disparar el evento al cargar si ya está seleccionado "nuevo"
+    if (clienteSelect.value === 'nuevo') {
+        clienteSelect.dispatchEvent(new Event('change'));
+    }
 }
 
 // Configurar event listeners
 function setupEventListeners() {
-    const form = document.getElementById('servicioForm');
+    const form = document.getElementById('viajeForm');
     const modal = document.getElementById('confirmModal');
     const closeModal = document.querySelector('.modal-close');
     const cancelConfirm = document.getElementById('cancelConfirm');
     const confirmSubmit = document.getElementById('confirmSubmit');
     const goBackToList = document.getElementById('goBackToList');
     
-    // Evento de envío del formulario
     form.addEventListener('submit', handleFormSubmit);
     
-    // Modal events
     closeModal.addEventListener('click', closeConfirmModal);
     cancelConfirm.addEventListener('click', closeConfirmModal);
     confirmSubmit.addEventListener('click', confirmFormSubmit);
     goBackToList.addEventListener('click', goBack);
     
-    // Cerrar modal al hacer clic fuera
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
             closeConfirmModal();
         }
     });
     
-    // Tecla Escape para cerrar modal
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeConfirmModal();
         }
     });
     
-    // Auto-save en localStorage (opcional)
     setupAutoSave();
 }
 
@@ -112,6 +129,24 @@ function clearFieldError(e) {
 // Mostrar modal de confirmación al enviar
 function handleFormSubmit(e) {
     e.preventDefault();
+    
+    // Validar campos de nuevo cliente si es necesario
+    if (document.getElementById('cliente_id').value === 'nuevo') {
+        const nuevoClienteFields = document.querySelectorAll('#nuevoClienteFields input');
+        let isValid = true;
+        
+        nuevoClienteFields.forEach(field => {
+            if (!field.checkValidity()) {
+                field.classList.add('invalid');
+                isValid = false;
+            }
+        });
+        
+        if (!isValid) {
+            return;
+        }
+    }
+    
     const modal = document.getElementById('confirmModal');
     modal.style.display = 'block';
 }
@@ -126,8 +161,7 @@ function closeConfirmModal() {
 function confirmFormSubmit() {
     const overlay = document.getElementById('loadingOverlay');
     overlay.style.display = 'flex';
-    document.getElementById('servicioForm').submit();
-    // Limpiar localStorage después de enviar el formulario
+    document.getElementById('viajeForm').submit();
     clearLocalStorageForForm(); 
 }
 
@@ -166,32 +200,31 @@ function setupPlacaField() {
 
 // Auto-guardado (opcional, solo si lo implementas)
 function setupAutoSave() {
-    const form = document.getElementById('servicioForm');
+    const form = document.getElementById('viajeForm');
     const inputs = form.querySelectorAll('input, select, textarea');
 
     inputs.forEach(input => {
         input.addEventListener('change', () => {
             const key = input.name;
             const value = input.value;
-            localStorage.setItem(`servicioForm_${key}`, value);
+            localStorage.setItem(`viajeForm_${key}`, value);
         });
 
         // Rellenar si hay datos guardados
-        const savedValue = localStorage.getItem(`servicioForm_${input.name}`);
+        const savedValue = localStorage.getItem(`viajeForm_${input.name}`);
         if (savedValue) input.value = savedValue;
     });
 }
 
 function goBack() {
-    // Limpiar localStorage al cancelar o salir del formulario
     clearLocalStorageForForm(); 
-    window.location.href = '../../servicios/list';
+    window.location.href = '/viajes/list';
 }
 
 function clearLocalStorageForForm() {
-    const form = document.getElementById('servicioForm');
+    const form = document.getElementById('viajeForm');
     const inputs = form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
-        localStorage.removeItem(`servicioForm_${input.name}`);
+        localStorage.removeItem(`viajeForm_${input.name}`);
     });
 }

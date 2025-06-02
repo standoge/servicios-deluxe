@@ -11,9 +11,13 @@ function initModels(sequelize) {
   var users = _users(sequelize, DataTypes);
   var vehicles = _vehicles(sequelize, DataTypes);
 
+  // Relación services -> vehicles (existente)
   services.belongsTo(vehicles, { as: "vehiculos", foreignKey: "vehicle_id"});
   vehicles.hasMany(services, { as: "services", foreignKey: "vehicle_id"});
 
+  // Relación services -> customers
+  services.belongsTo(customers, { as: "customer", foreignKey: "customer_id"});
+  customers.hasMany(services, { as: "services", foreignKey: "customer_id"});
 
   return {
     customers,

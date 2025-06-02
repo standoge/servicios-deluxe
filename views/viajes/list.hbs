@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicios de Mantenimiento</title>
-    <link rel="stylesheet" href="/services/list/list.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servicios de Viajes</title>
+  <link rel="stylesheet" href="/services/list/list.css">
 </head>
 <body>
     {{> navbar }}
@@ -75,7 +75,7 @@
             </div>
             
             <div class="filter-group">
-                <a href="/viajes/" class="btn btn-success">
+                <a href="/viajes/nuevo" class="btn btn-success">
                     ➕ Nuevo Servicio
                 </a>
             </div>
@@ -132,13 +132,7 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Pasar datos del servidor al cliente -->
-    <script id="serviciosData" type="application/json">
-        {{{serviciosJSON}}}
-    </script>
-    
     <script src="/services/list/list.js"></script>
 </body>
 </html>

@@ -1,8 +1,6 @@
 // services.service.js
-
 import { createRequire } from "module";
 import sequelize from "../../config/sequelize.js";
-import vehicles from "../../models/vehiculos.cjs";
 const require = createRequire(import.meta.url);
 const initModelsFunction = require('../../models/init-models.cjs');
 
@@ -11,13 +9,23 @@ const Service = models.services;
 
 const createService = async (serviceData) => Service.create(serviceData);
 
-const getAllServices = async () => Service.findAll({ include: { model: models.vehicles, as: "vehiculos" } });
+const getAllServices = async () => Service.findAll({ 
+  include: [
+    { model: models.vehicles, as: "vehiculos" },
+    { model: models.customers, as: "customer" }
+  ] 
+});
 
-const getServiceById = async (id) => Service.findByPk(id);
+const getServiceById = async (id) => Service.findByPk(id, {
+  include: [
+    { model: models.vehicles, as: "vehiculos" },
+    { model: models.customers, as: "customer" }
+  ]
+});
 
 const updateService = async (id, serviceData) => {
-  const Service = await Service.findByPk(id);
-  return Service ? Service.update(serviceData) : null;
+  const service = await Service.findByPk(id);
+  return service ? service.update(serviceData) : null;
 };
 
 const deleteService = async (id) => Service.destroy({ where: { id } });

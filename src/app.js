@@ -75,7 +75,7 @@ app.use('/clientes', requireAuth, clientesRoutes);
 app.use('/vehiculos', requireAuth, vehiculosRoutes);
 app.use('/customers', requireAuth, customerRoutes);
 // app.use('/servicios', requireAuth, mantenimientoRoutes);
-app.use('/viajes',serviciosRoutes);
+app.use('/viajes', serviciosRoutes);
 
 // Protege el panel de bienvenida
 app.get('/panelhome', requireAuth, (req, res) => {

@@ -7,8 +7,9 @@ import {
     getServiceById
 } from './services.service.js';
 import sequelize from '../../config/sequelize.js';
-import initModels from '../../models/init-models.cjs'; // <-- Importación correcta
-import { getAllVehicles } from '../vehicles/vehicles.service.js'; // Importa el servicio de vehículos
+import initModels from '../../models/init-models.cjs';
+import { getAllVehicles } from '../vehicles/vehicles.service.js';
+import { getAllCustomers } from '../customers/customers.service.js';
 
 const models = initModels(sequelize);
 
@@ -143,7 +144,7 @@ const listarServicios = async (req, res) => {
             serviciosJSON: JSON.stringify(servicios) // Para pasar al cliente
         };
 
-        res.render('services/list', datosVista);
+        res.render('viajes/list', datosVista);
 
     } catch (error) {
         console.error('Error al listar servicios:', error);
@@ -157,9 +158,18 @@ const listarServicios = async (req, res) => {
 // Controlador para mostrar formulario de nuevo servicio
 const mostrarFormularioViaje = async (req, res) => {
     try {
-        const vehiculos = await getAllVehicles(); // Obtén todos los vehículos
-        const viaje = req.params.id ? await getViajeById(req.params.id) : null; // Si hay un ID, busca el viaje
-        res.render('viaje/form', { viaje, vehiculos }); // Pasa los vehículos y el viaje a la vista
+        const vehiculos = await getAllVehicles();
+        const clientes = await getAllCustomers();
+        const viaje = req.params.id ? await getServiceById(req.params.id) : null;
+
+        res.render('viajes/form', {  // Cambia 'services/form' a 'viajes/form'
+            viaje,
+            vehiculos,
+            clientes,
+            titulo: viaje ? 'Editar Viaje' : 'Nuevo Viaje',
+            accion: viaje ? `/viajes/actualizar/${viaje.id}` : '/viajes/crear',
+            metodo: 'POST'
+        });
     } catch (error) {
         res.status(500).render('error', {
             message: "Error al cargar el formulario de viaje",
@@ -188,7 +198,7 @@ const mostrarFormularioEdicion = async (req, res) => {
             servicio
         };
 
-        res.render('services/form', datosVista);
+        res.render('viajes/form', datosVista);
 
     } catch (error) {
         console.error('Error al cargar servicio para edición:', error);
@@ -216,7 +226,7 @@ const crearServicio = async (req, res) => {
         }
 
         // Si es un form tradicional, redirige
-        res.redirect('/servicios/list?success=created');
+        res.redirect('/viajes/list?success=created');
 
     } catch (error) {
         console.error('Error al crear servicio:', error);
@@ -237,13 +247,14 @@ const crearServicio = async (req, res) => {
 const actualizarServicio = async (req, res) => {
     try {
         const id = parseInt(req.params.id);
+        const servicio = await getServiceById(id);
 
-        const indice = getServiceById(id);
-        if (indice !== -1) {
-            updateService(id, req.body);
-        };
+        if (!servicio) {
+            return res.status(404).json({ message: 'Servicio no encontrado' });
+        }
 
-        res.redirect('/servicios/list?success=updated');
+        await updateService(id, req.body);
+        res.redirect('/viajes/list?success=updated');
 
     } catch (error) {
         console.error('Error al actualizar servicio:', error);

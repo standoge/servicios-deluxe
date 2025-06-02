@@ -15,6 +15,14 @@ module.exports = function(sequelize, DataTypes) {
         key: 'vehicle_id'
       }
     },
+    customer_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'customers',
+        key: 'customer_id'
+      }
+    },
     tipo_servicio: {
       type: DataTypes.STRING(100),
       allowNull: false
@@ -58,6 +66,12 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "idx_service_customer",
+        fields: [
+          { name: "customer_id" },
         ]
       },
     ]
