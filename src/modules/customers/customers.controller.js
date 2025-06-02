@@ -61,14 +61,30 @@ const crearCliente = async (req, res) => {
 const actualizarCliente = async (req, res) => {
     try {
         const id = req.params.id;
-        const indice = getCustomerById(id);
-        if (indice !== -1) {
-            await updateCustomer(id, req.body);
+        // Busca el cliente por ID (puede ser null si no existe)
+        const cliente = await getCustomerById(id);
+        if (!cliente) {
+            // Si la petición es AJAX (fetch), responde con JSON de error
+            if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+                return res.status(404).json({ success: false, message: "Cliente no encontrado" });
+            }
+            return res.status(404).render('error', { message: "Cliente no encontrado" });
         }
 
-        res.redirect('/clientes/list?success=updated');
+        // Actualiza el cliente con los datos recibidos
+        await updateCustomer(id, req.body);
+
+        // Si la petición es AJAX (fetch), responde con JSON de éxito
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            return res.status(200).json({ success: true, message: 'Cliente modificado exitosamente' });
+        }
+
     } catch (error) {
         console.log('Error al actualizar cliente', error);
+        // Si la petición es AJAX (fetch), responde con JSON de error
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            return res.status(400).json({ success: false, message: error.message || 'Error al actualizar cliente' });
+        }
         res.status(500).render('error', { 
             message: "Error al actualizar cliente",
             error: error
@@ -127,12 +143,11 @@ const formularioClienteEdicion = async (req, res) => {
             });
         }
 
-        const datosVista = { 
-                cliente,
-                accion: '/clientes/${id}',
-                metodo: 'POST',
-        };
-        return res.render('customers/form', datosVista);
+        return res.render('customers/form', {
+            titulo: 'Editar Cliente',
+            accion: `/clientes/${cliente.customer_id}`,
+            cliente
+        });
     } catch (error) {
         console.log('Error al mostrar formulario de edición', error);
         res.status(500).render('error', { 

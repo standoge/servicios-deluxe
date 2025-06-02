@@ -21,8 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
+        // Detectar si es edición (la acción termina en /clientes/ID)
+        const isEdit = /\/clientes\/\d+$/.test(form.action);
+
         fetch(form.action, {
-            method: form.method, // Asegúrate que el atributo method del formulario sea el correcto (e.g., "POST")
+            method: form.method, // POST para ambos casos
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -32,7 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(json => {
             loadingOverlay.style.display = 'none';
             if(json.success) {
-                alert(json.message);
+                if(isEdit) {
+                    alert('Cliente modificado exitosamente');
+                } else {
+                    alert('Cliente guardado exitosamente');
+                }
                 // Opcional: limpiar formulario o actualizar la vista
             } else {
                 alert("Error: " + json.message);
