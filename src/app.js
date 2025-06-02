@@ -68,7 +68,6 @@ app.use(session({
 
 // Endpoints use
 app.use('/', loginRoutes);
-app.use('/usuarios', usersRoutes);
 
 // Protege todas las rutas de vehículos y servicios
 app.use('/clientes', requireAuth, clientesRoutes);
