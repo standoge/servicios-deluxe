@@ -26,14 +26,6 @@ module.exports = function(sequelize, DataTypes) {
     comment: {
       type: DataTypes.TEXT,
       allowNull: true
-    },
-    lastname: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    dui: {
-      type: DataTypes.INTEGER,
-      allowNull: true
     }
   }, {
     sequelize,

@@ -57,7 +57,6 @@ app.set('views', path.join(__dirname, '../views'));
 // JSON middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride('_method'));
 
 // Session middleware
 app.use(session({
@@ -69,6 +68,7 @@ app.use(session({
 
 // Endpoints use
 app.use('/', loginRoutes);
+app.use('/usuarios', usersRoutes);
 
 // Protege todas las rutas de vehículos y servicios
 app.use('/clientes', requireAuth, clientesRoutes);
