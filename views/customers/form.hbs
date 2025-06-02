@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="/clientes/form/form.css" />
 </head>
 <body>
+	    {{> navbar }}
 	<div class="container">
 
 		<div class="header">
@@ -21,13 +22,13 @@
 				<div class="form-grid">
 
 					<div class="form-group">
-						<label for="nombre" class="required">Nombres</label>
-						<input type="text" id="nombre" name="nombre" value="{{cliente.nombre}}" required />
+						<label for="name" class="required">Nombres</label>
+						<input type="text" id="name" name="name" value="{{cliente.nombre}}" required />
 					</div>
 
 					<div class="form-group">
-						<label for="apellido" class="required">Apellidos</label>
-						<input type="text" id="apellido" name="apellido" value="{{cliente.apellido}}" required />
+						<label for="lastname" class="required">Apellidos</label>
+						<input type="text" id="lastname" name="lastname" value="{{cliente.apellido}}" required />
 					</div>
 
 					<div class="form-group">
@@ -36,18 +37,18 @@
 					</div>
 
 					<div class="form-group">
-						<label for="telefono">Teléfono</label>
-						<input type="text" id="telefono" name="telefono" value="{{cliente.telefono}}" placeholder="0000-0000" />
+						<label for="phone">Teléfono</label>
+						<input type="text" id="phone" name="phone" value="{{cliente.telefono}}" placeholder="0000-0000" />
 					</div>
 
 					<div class="form-group">
-						<label for="correo">Correo Electrónico</label>
-						<input type="email" id="correo" name="correo" value="{{cliente.correo}}" placeholder="correo@ejemplo.com" />
+						<label for="email">Correo Electrónico</label>
+						<input type="email" id="email" name="email" value="{{cliente.correo}}" placeholder="correo@ejemplo.com" />
 					</div>
 
 					<div class="form-group form-full">
-						<label for="direccion">Dirección</label>
-						<textarea id="direccion" name="direccion" rows="2">{{cliente.direccion}}</textarea>
+						<label for="location">Dirección</label>
+						<textarea id="location" name="location" rows="2">{{cliente.direccion}}</textarea>
 					</div>
 
 				</div>
@@ -66,8 +67,8 @@
 					</div>
 
 					<div class="form-group form-full">
-						<label for="observaciones">Observaciones</label>
-						<textarea id="observaciones" name="observaciones" rows="3">{{cliente.observaciones}}</textarea>
+						<label for="comment">Observaciones</label>
+						<textarea id="comment" name="comment" rows="3">{{cliente.observaciones}}</textarea>
 					</div>
 
 				</div>
@@ -75,26 +76,12 @@
 
 			<!-- Botones de Acción -->
 			<div class="form-actions">
-				<button type="button" class="btn btn-secondary" id="goBackToList">
-					<span class="btn-icon">←</span> Regresar
-				</button>
-
+				<a href="/clientes/list"  type="button" class="btn btn-secondary" id="cancelConfirm">Cancelar</a>
 				<button type="submit" class="btn btn-primary" id="submitBtn">
 					<span class="btn-icon">💾</span>
 					{{#if cliente.id}}Actualizar Cliente{{else}}Guardar Cliente{{/if}}
 				</button>
 			</div>
-
-			<script>
-				document.addEventListener('DOMContentLoaded', function () {
-					const goBackBtn = document.getElementById('goBackToList');
-					if (goBackBtn) {
-						goBackBtn.addEventListener('click', function () {
-							window.location.href = 'http://localhost:3000/clientes/list/';
-						});
-					}
-				});
-			</script>
 
 		</form>
 

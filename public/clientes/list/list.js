@@ -50,20 +50,32 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `/clientes/form/edit/${id}`;
     }
 
-    // Filtro por estado
-    document.getElementById('estadoFilter').addEventListener('change', function () {
-        const filterValue = this.value.toLowerCase();
-        const table = document.getElementById('clientesTable');
-        const trs = table.tBodies[0].rows;
 
-        for (let row of trs) {
-            const estado = row.cells[4].textContent.toLowerCase();
-            if (filterValue === '' || estado === filterValue) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
+
+    document.querySelectorAll('.btn-delete-customer').forEach(btn => {
+        console.log('Botón de eliminación encontrado:', btn);
+        btn.addEventListener('click', function() {
+            const customerId = this.getAttribute('data-id');
+            if (confirm("¿Seguro que deseas eliminar este cliente?")) {
+                fetch(`/clientes/${customerId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert(data.message);
+                        // Eliminar el elemento de la tabla o recargar la página
+                        document.getElementById('row-' + customerId).remove();
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert("Error de red: " + error);
+                });
             }
-        }
+        });
     });
 
     // Exponer funciones globales para HTML inline
