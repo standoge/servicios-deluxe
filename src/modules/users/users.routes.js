@@ -16,6 +16,8 @@ const router = Router();
 // 	res.render('login/login', { title: 'Login', layout: false }); //login/login es views/login/login.hbs
 // });
 
+
+
 // AUTH
 router.post('/autenticar', async (req, res) => {
     const { username, password } = req.body;
@@ -107,61 +109,67 @@ router.post('/', async (req, res) => {
 });
 
 // UPDATE 
-router.put('/:id', requireAuth ,async (req, res) => {
-	const { id } = req.params;
-	const { username, password } = req.body;
+router.put('/:id', requireAuth, async (req, res) => {
+    const { id } = req.params;
+    const { old_password, password } = req.body;
 
-	try {
-		const user = await User.findOne({
-			where: {
-				user_id: id,
-				active: true
-			}
-		});
+    try {
+        const user = await User.findOne({
+            where: {
+                user_id: id,
+                active: true
+            }
+        });
 
-		if (!user) {
-			return res.status(404).json({
-				success: false,
-				message: 'EL usuario no fue encontrado'
-			});
-		}
+        if (!user) {
+            if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'El usuario no fue encontrado'
+                });
+            }
+            return res.status(404).render('error', { message: 'El usuario no fue encontrado' });
+        }
 
-		const updateData = {};
+        // Validar contraseña antigua
+        const isOldPasswordValid = await bcrypt.compare(old_password, user.password);
+        if (!isOldPasswordValid) {
+            if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'La contraseña actual es incorrecta'
+                });
+            }
+            return res.status(400).render('error', { message: 'La contraseña actual es incorrecta' });
+        }
 
-		// Actualizacion de nombre de usuario
-		if (username) {
-			const existingUser = await User.findOne({
-				where: {
-					username,
-					user_id: { [sequelize.Sequelize.Op.ne]: id } // Buscar usuarios con el mismo nombre de usuario, pero diferente ID
-				}
-			});
+        // Actualización de contraseña
+        if (password) {
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            await user.update({ password: hashedPassword });
+        }
 
-			if (existingUser) {
-				return res.status(409).json({
-					success: false,
-					message: 'No se puede actualizar el usuario, ya que el nombre de usuario ya existe'
-				});
-			}
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            return res.status(200).json({
+                success: true,
+                message: 'Contraseña actualizada correctamente'
+            });
+        }
 
-			updateData.username = username;
-		}
-
-		// Actualizacion de contraseña
-		if (password) {
-			const saltRounds = 10;
-			updateData.password = await bcrypt.hash(password, saltRounds);
-		}
-
-		await user.update(updateData);
-
-	} catch (error) {
-		console.error('Error al actualizar el usuario:', error);
-		res.status(500).json({
-			success: false,
-			message: 'Error al actualizar el usuario'
-		});
-	}
+        res.redirect('/panelhome');
+    } catch (error) {
+        console.error('Error al actualizar el usuario:', error);
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error al actualizar el usuario'
+            });
+        }
+        res.status(500).render('error', {
+            message: 'Error al actualizar el usuario'
+        });
+    }
 });
 
 // DELETE 
@@ -197,6 +205,14 @@ router.delete('/:id',requireAuth ,async (req, res) => {
 			message: 'Error deleting user'
 		});
 	}
+});
+
+// Ruta GET para mostrar el formulario de cambio de contraseña
+router.get('/cambiar-contra', requireAuth, (req, res) => {
+
+    const cliente = {...req.session.user, user_id: req.session.user.id};
+    console.log(cliente);
+    res.render('login/cambiarcontra',cliente);
 });
 
 export default router;

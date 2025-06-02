@@ -1,0 +1,29 @@
+{{> navbar }}
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <form id="changePasswordForm" method="POST" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 320px;">
+        <input type="hidden" id="user_id" name="user_id" value="{{this.user_id}}">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Cambiar Contraseña</h2>
+        <div style="margin-bottom: 1rem;">
+            <label for="old_password" style="display: block; margin-bottom: 0.5rem;">Contraseña Actual</label>
+            <input type="password" id="old_password" name="old_password"
+                style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <label for="new_password" style="display: block; margin-bottom: 0.5rem;">Nueva Contraseña</label>
+            <input type="password" id="new_password" name="new_password" required minlength="8"
+                pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$"
+                title="Mínimo 8 caracteres, al menos 1 letra, 1 número y 1 símbolo"
+                style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <label for="confirm_new_password" style="display: block; margin-bottom: 0.5rem;">Repetir Nueva Contraseña</label>
+            <input type="password" id="confirm_new_password" name="confirm_new_password" required minlength="8"
+                style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <button type="submit" style="width: 100%; padding: 0.75rem; background: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 1rem;">Cambiar Contraseña</button>
+        <div style="margin-top: 1rem; text-align: center;">
+            <a href="/panelhome" class="btn btn-secondary" style="color: #007bff;">&larr; Volver al inicio</a>
+        </div>
+    </form>
+</div>
+<script src="/js/contraService.js"></script>
