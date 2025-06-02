@@ -38,7 +38,7 @@
                 </select>
             </div>
             <div class="filter-group">
-                <a href="http://localhost:3000/conductores/nuevo/" class="btn btn-success" target="_blank" rel="noopener noreferrer">
+                <a href="http://localhost:3000/conductores/form/add" class="btn btn-success" target="_blank" rel="noopener noreferrer">
     ➕ Nuevo Conductor
 </a>
 
@@ -50,20 +50,16 @@
                 <thead>
                     <tr>
                         <th onclick="sortTable(0)">Nombre <span>▲▼</span></th>
-                        <th onclick="sortTable(1)">Apellido <span>▲▼</span></th>
-                        <th onclick="sortTable(2)">DUI <span>▲▼</span></th>
-                        <th onclick="sortTable(3)">Licencia <span>▲▼</span></th>
-                        <th onclick="sortTable(4)">Estado <span>▲▼</span></th>
+                        <th onclick="sortTable(1)">Licencia <span>▲▼</span></th>
+                        <th onclick="sortTable(2)">Activo <span>▲▼</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each conductores}}
                     <tr onclick="verConductor({{this.id}})" style="cursor:pointer;">
-                        <td>{{this.nombre}}</td>
-                        <td>{{this.apellido}}</td>
-                        <td>{{this.dui}}</td>
-                        <td>{{this.licencia}}</td>
-                        <td>{{this.estado}}</td>
+                        <td>{{this.name}}</td>
+                        <td>{{this.driver_id}}</td>
+                        <td>{{this.active}}</td>
                     </tr>
                     {{/each}}
                 </tbody>

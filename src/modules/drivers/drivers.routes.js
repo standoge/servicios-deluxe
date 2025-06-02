@@ -9,6 +9,51 @@ const Driver = models.drivers;
 
 const router = Router();
 
+router.get('/form/add', async (req, res) => {
+  try {
+    res.render('drivers/form',{
+      accion: 'conductor',
+      metodo: 'POST',
+      conductor: {
+        id: '',
+        name: '',
+        birthdate: '',
+        driver_id: '',
+        phone: ''
+      }
+    })
+  } catch (error) {
+    console.log('Error al mostrar formulario nuevo', error);
+        res.status(500).render('error', { 
+            message: "Error al mostrar formulario nuevo",
+            error: error
+    });
+  }
+});
+
+router.get('/form/:id', async (req, res) => {
+  try {
+    const conductor = await Driver.findByPk(req.params.id);
+    if (!conductor) {
+        return res.status(404).render('error', { 
+            message: "Conductor no encontrado"
+        });
+    }
+
+    res.render('drivers/form',{
+        accion: 'conductor',
+        metodo: 'POST',
+        conductor
+    })
+  } catch (error) {
+    console.log('Error al mostrar formulario nuevo', error);
+        res.status(500).render('error', { 
+            message: "Error al mostrar formulario nuevo",
+            error: error
+        });
+  }
+});
+
 // CREATE 
 router.post('/', async (req, res) => {
   const { name, birthdate, driver_id, phone } = req.body;
@@ -74,18 +119,18 @@ router.post('/', async (req, res) => {
 });
 
 // READ ALL
-router.get('/', async (req, res) => {
+router.get('/list', async (req, res) => {
   try {
-    const drivers = await Driver.findAll({
+    const conductores = await Driver.findAll({
       where: {
         active: true
       },
       attributes: ['driver_id', 'name', 'birthdate',  'phone', 'active']
     });
 
-    res.json({
-      success: true,
-      drivers
+    res.render('drivers/list', {
+      conductores,
+      conductoresJSON: JSON.stringify(conductores)
     });
   } catch (error) {
     console.error('Error al obtener conductores:', error);
@@ -130,7 +175,7 @@ router.get('/:license', async (req, res) => {
 });
 
 // UPDATE 
-router.put('/:license', async (req, res) => {
+router.post('/:license', async (req, res) => {
   const { license } = req.params;
   const { name, birthdate, phone } = req.body;
 
