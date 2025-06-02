@@ -1,17 +1,36 @@
+{{> navbar }}
 <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <form action="/usuarios/" method="POST" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 300px;">
+    <form id="registerForm" action="/usuarios/" method="POST" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 300px;">
         <h2 style="text-align: center; margin-bottom: 1.5rem;">Crear Cuenta</h2>
         <div style="margin-bottom: 1rem;">
             <label for="username" style="display: block; margin-bottom: 0.5rem;">Usuario</label>
             <input type="text" id="username" name="username" required style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
         </div>
-        <div style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1rem;">
             <label for="password" style="display: block; margin-bottom: 0.5rem;">Contraseña</label>
-            <input type="password" id="password" name="password" required style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="password" id="password" name="password" required minlength="8"
+                pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$"
+                title="Mínimo 8 caracteres, al menos 1 letra, 1 número y 1 símbolo"
+                style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <label for="confirm_password" style="display: block; margin-bottom: 0.5rem;">Confirmar Contraseña</label>
+            <input type="password" id="confirm_password" name="confirm_password" required minlength="8"
+                style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
         </div>
         <button type="submit" style="width: 100%; padding: 0.75rem; background: #28a745; color: #fff; border: none; border-radius: 4px; font-size: 1rem;">Crear Cuenta</button>
         <div style="margin-top: 1rem; text-align: center;">
-            <a href="/login">¿Ya tienes cuenta? Inicia sesión</a>
+            <a href="/clientes/list" class="btn btn-secondary" style="color: #007bff;">&larr; Volver a Clientes</a>
         </div>
     </form>
 </div>
+<script>
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const pass = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm_password').value;
+    if (pass !== confirm) {
+        e.preventDefault();
+        alert('Las contraseñas no coinciden.');
+    }
+});
+</script>

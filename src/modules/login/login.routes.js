@@ -5,6 +5,7 @@ const require = createRequire(import.meta.url);
 const initModelsFunction = require('../../models/init-models.cjs');
 
 import { renderLogin, renderRegister, authenticateUser,logout } from './login.controller.js';
+import { requireAuth } from '../../middleware/auth.js';
 
 const models = initModelsFunction(sequelize);
 const User = models.users;
@@ -15,7 +16,7 @@ router.get('/', renderLogin);
 
 router.post('/authenticate', authenticateUser(User));
 
-router.get('/register', renderRegister);
+router.get('/register',requireAuth, renderRegister);
 
 router.get('/logout',logout);
 
