@@ -73,8 +73,9 @@
     <table class="clientes-table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>DUI</th>
                 <th>Nombre</th>
+                <th>Apellido</th>
                 <th>Teléfono</th>
                 <th>Email</th>
                 <th>Acciones</th>
@@ -83,15 +84,16 @@
         <tbody>
             {{#each clientes}}
             <tr>
-                <td>{{customer_id}}</td>
+                <td>{{dui}}</td>
                 <td>{{name}}</td>
+                <td>{{lastname}}</td>
                 <td>{{phone}}</td>
                 <td>{{email}}</td>
                 <td>
                     <a href="/clientes/form/{{this.customer_id}}" class="btn btn-primary" title="Editar">
                         <span aria-hidden="true">&#9998;</span> Editar
                     </a>
-                    <form action="/clientes/{{this.customer_id}}" method="POST" style="display:inline;">
+                    <form action="/clientes/{{this.customer_id}}?_method=DELETE" method="POST" style="display:inline;">
                         <button type="submit" class="btn btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este cliente?');" title="Eliminar">
                             <span aria-hidden="true">&#128465;</span> Eliminar
                         </button>

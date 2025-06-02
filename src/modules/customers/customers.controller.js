@@ -91,7 +91,10 @@ const formularioClienteNuevo = async (req, res) => {
                 accion: '/clientes',
                 metodo: 'POST',
                 cliente: {
+                    customer_id: '',
                     name: '',
+                    lastname: '',
+                    dui: '',
                     email: '',
                     phone: '',
                     location: '',
@@ -120,7 +123,7 @@ const formularioClienteEdicion = async (req, res) => {
 
         const datosVista = { 
                 cliente,
-                accion: '/clientes/${id}',
+                accion: '/clientes/' + cliente.customer_id,
                 metodo: 'POST',
         };
         return res.render('customers/form', datosVista);
@@ -147,7 +150,9 @@ const generarReporte = async (req, res) => {
         // Escribir los encabezados de la tabla en la primera fila
         worksheet.columns = [
             { header: 'ID', key: 'customer_id', width: 5 },
+            { header: 'DUI', key: 'dui', width: 15 },
             { header: 'Nombre', key: 'name', width: 20  },
+            { header: 'Apellido', key: 'lastname', width: 20  },
             { header: 'Teléfono', key: 'phone', width: 15  },
             { header: 'Correo Electrónico', key: 'email', width: 20  },
             { header: 'Ubicacion', key: 'location', width: 20  },
@@ -158,7 +163,9 @@ const generarReporte = async (req, res) => {
         clientes.forEach((cliente) => {
             worksheet.addRow({
                 customer_id: cliente.customer_id,
+                dui: cliente.dui,
                 name: cliente.name,
+                lastname: cliente.lastname,
                 phone: cliente.phone,
                 email: cliente.email,
                 location: cliente.location,

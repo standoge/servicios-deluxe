@@ -3,8 +3,8 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('customers', {
     customer_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      autoIncrement: true
     },
     name: {
       type: DataTypes.STRING(50),
@@ -24,6 +24,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     comment: {
       type: DataTypes.TEXT,
+      allowNull: true
+    },
+    lastname: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    dui: {
+      type: DataTypes.INTEGER,
       allowNull: true
     }
   }, {

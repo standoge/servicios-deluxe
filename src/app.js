@@ -56,6 +56,7 @@ app.set('views', path.join(__dirname, '../views'));
 // JSON middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 // Session middleware
 app.use(session({
