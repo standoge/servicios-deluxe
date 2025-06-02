@@ -1,144 +1,147 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicios de Mantenimiento</title>
-    <link rel="stylesheet" href="/services/list/list.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servicios de Mantenimiento</title>
+  <link rel="stylesheet" href="/services/list/list.css">
 </head>
+
 <body>
-    {{> navbar }}
+  {{> navbar }}
 
-    <div class="container">
-        <div class="header">
-            <h1>🚗 Servicios de Mantenimiento</h1>
-            <p>Gestión y seguimiento de servicios vehiculares</p>
-        </div>
-
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number">{{estadisticas.totalServicios}}</div>
-                <div class="stat-label">Total Servicios</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{estadisticas.serviciosMes}}</div>
-                <div class="stat-label">Este Mes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">${{estadisticas.costoTotal}}</div>
-                <div class="stat-label">Costo Total</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{estadisticas.vehiculosActivos}}</div>
-                <div class="stat-label">Vehículos Activos</div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <div class="filter-group">
-                <label for="vehiculoFilter">Filtrar por Vehículo:</label>
-                <select id="vehiculoFilter">
-                    <option value="">Todos los vehículos</option>
-                    {{#each vehiculos}}
-                    <option value="{{this.placa}}" {{#if this.selected}}selected{{/if}}>
-                        {{this.placa}} - {{this.marca}} {{this.modelo}}
-                    </option>
-                    {{/each}}
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="mesFilter">Mes:</label>
-                <select id="mesFilter">
-                    <option value="0" {{#if (eq mesActual 0)}}selected{{/if}}>Enero</option>
-                    <option value="1" {{#if (eq mesActual 1)}}selected{{/if}}>Febrero</option>
-                    <option value="2" {{#if (eq mesActual 2)}}selected{{/if}}>Marzo</option>
-                    <option value="3" {{#if (eq mesActual 3)}}selected{{/if}}>Abril</option>
-                    <option value="4" {{#if (eq mesActual 4)}}selected{{/if}}>Mayo</option>
-                    <option value="5" {{#if (eq mesActual 5)}}selected{{/if}}>Junio</option>
-                    <option value="6" {{#if (eq mesActual 6)}}selected{{/if}}>Julio</option>
-                    <option value="7" {{#if (eq mesActual 7)}}selected{{/if}}>Agosto</option>
-                    <option value="8" {{#if (eq mesActual 8)}}selected{{/if}}>Septiembre</option>
-                    <option value="9" {{#if (eq mesActual 9)}}selected{{/if}}>Octubre</option>
-                    <option value="10" {{#if (eq mesActual 10)}}selected{{/if}}>Noviembre</option>
-                    <option value="11" {{#if (eq mesActual 11)}}selected{{/if}}>Diciembre</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="anioFilter">Año:</label>
-                <select id="anioFilter">
-                    {{#each aniosDisponibles}}
-                    <option value="{{this}}" {{#if (eq this ../anioActual)}}selected{{/if}}>{{this}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <a href="/viajes/" class="btn btn-success">
-                    ➕ Nuevo Servicio
-                </a>
-            </div>
-        </div>
-
-        <div class="calendar-container">
-            <div class="calendar-header">
-                <h2 id="mesAnioActual">{{mesNombre}} {{anioActual}}</h2>
-                <div class="calendar-nav">
-                    <button class="nav-btn" id="prevMes">‹ Anterior</button>
-                    <button class="nav-btn" id="hoyBtn">Hoy</button>
-                    <button class="nav-btn" id="nextMes">Siguiente ›</button>
-                </div>
-            </div>
-            
-            <div class="calendar-grid">
-                <div class="day-header">Dom</div>
-                <div class="day-header">Lun</div>
-                <div class="day-header">Mar</div>
-                <div class="day-header">Mié</div>
-                <div class="day-header">Jue</div>
-                <div class="day-header">Vie</div>
-                <div class="day-header">Sáb</div>
-                
-                {{#each diasCalendario}}
-                <div class="day-cell {{#if this.otroMes}}other-month{{/if}}">
-                    <div class="day-number">{{this.numero}}</div>
-                    {{#each this.servicios}}
-                    <div class="service-item {{this.estado}}" onclick="editarServicio({{this.id}})">
-                        <div class="service-vehicle">{{this.vehiculo.placa}}</div>
-                        <div class="service-type">{{this.tipoServicio}}</div>
-                        <div class="service-cost">${{this.costoFormateado}}</div>
-                    </div>
-                    {{/each}}
-                </div>
-                {{/each}}
-            </div>
-        </div>
-
-        <div class="legend">
-            <h3>Leyenda de Estados</h3>
-            <div class="legend-items">
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);"></div>
-                    <span>Programado</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);"></div>
-                    <span>Urgente</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);"></div>
-                    <span>Completado</span>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h1>🚗 Servicios de Mantenimiento</h1>
+      <p>Gestión y seguimiento de servicios vehiculares</p>
     </div>
 
-    <!-- Pasar datos del servidor al cliente -->
-    <script id="serviciosData" type="application/json">
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number">{{estadisticas.totalServicios}}</div>
+        <div class="stat-label">Total Servicios</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{estadisticas.serviciosMes}}</div>
+        <div class="stat-label">Este Mes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">${{estadisticas.costoTotal}}</div>
+        <div class="stat-label">Costo Total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{estadisticas.vehiculosActivos}}</div>
+        <div class="stat-label">Vehículos Activos</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="filter-group">
+        <label for="vehiculoFilter">Filtrar por Vehículo:</label>
+        <select id="vehiculoFilter">
+          <option value="">Todos los vehículos</option>
+          {{#each vehiculos}}
+          <option value="{{this.placa}}" {{#if this.selected}}selected{{/if}}>
+            {{this.placa}} - {{this.marca}} {{this.modelo}}
+          </option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="mesFilter">Mes:</label>
+        <select id="mesFilter">
+          <option value="0" {{#if (eq mesActual 0)}}selected{{/if}}>Enero</option>
+          <option value="1" {{#if (eq mesActual 1)}}selected{{/if}}>Febrero</option>
+          <option value="2" {{#if (eq mesActual 2)}}selected{{/if}}>Marzo</option>
+          <option value="3" {{#if (eq mesActual 3)}}selected{{/if}}>Abril</option>
+          <option value="4" {{#if (eq mesActual 4)}}selected{{/if}}>Mayo</option>
+          <option value="5" {{#if (eq mesActual 5)}}selected{{/if}}>Junio</option>
+          <option value="6" {{#if (eq mesActual 6)}}selected{{/if}}>Julio</option>
+          <option value="7" {{#if (eq mesActual 7)}}selected{{/if}}>Agosto</option>
+          <option value="8" {{#if (eq mesActual 8)}}selected{{/if}}>Septiembre</option>
+          <option value="9" {{#if (eq mesActual 9)}}selected{{/if}}>Octubre</option>
+          <option value="10" {{#if (eq mesActual 10)}}selected{{/if}}>Noviembre</option>
+          <option value="11" {{#if (eq mesActual 11)}}selected{{/if}}>Diciembre</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="anioFilter">Año:</label>
+        <select id="anioFilter">
+          {{#each aniosDisponibles}}
+          <option value="{{this}}" {{#if (eq this ../anioActual)}}selected{{/if}}>{{this}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <a href="/viajes/" class="btn btn-success">
+          ➕ Nuevo Servicio
+        </a>
+      </div>
+    </div>
+
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <h2 id="mesAnioActual">{{mesNombre}} {{anioActual}}</h2>
+        <div class="calendar-nav">
+          <button class="nav-btn" id="prevMes">‹ Anterior</button>
+          <button class="nav-btn" id="hoyBtn">Hoy</button>
+          <button class="nav-btn" id="nextMes">Siguiente ›</button>
+        </div>
+      </div>
+
+      <div class="calendar-grid">
+        <div class="day-header">Dom</div>
+        <div class="day-header">Lun</div>
+        <div class="day-header">Mar</div>
+        <div class="day-header">Mié</div>
+        <div class="day-header">Jue</div>
+        <div class="day-header">Vie</div>
+        <div class="day-header">Sáb</div>
+
+        {{#each diasCalendario}}
+        <div class="day-cell {{#if this.otroMes}}other-month{{/if}}">
+          <div class="day-number">{{this.numero}}</div>
+          {{#each this.viajes}}
+          <div class="service-item {{this.estado}}" onclick="editarServicio({{this.id}})">
+            <div class="service-vehicle">{{this.vehiculo.placa}}</div>
+            <div class="service-type">{{this.tipo_servicio}}</div>
+            <div class="service-cost">${{this.costoFormateado}}</div>
+          </div>
+          {{/each}}
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="legend">
+      <h3>Leyenda de Estados</h3>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="legend-color" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);"></div>
+          <span>Programado</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);"></div>
+          <span>Urgente</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);"></div>
+          <span>Completado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pasar datos del servidor al cliente -->
+  <script id="serviciosData" type="application/json">
         {{{serviciosJSON}}}
     </script>
-    
-    <script src="/services/list/list.js"></script>
+
+  <script src="/services/list/list.js"></script>
 </body>
+
 </html>

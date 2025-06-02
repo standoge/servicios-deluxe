@@ -1,16 +1,15 @@
 // Variables globales
-let servicios = [];
+let viajes = [];
 let mesActual = new Date().getMonth();
 let anioActual = new Date().getFullYear();
 let vehiculoFiltro = "";
 
 // Inicializar la aplicación cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar datos del servidor
     cargarDatosDelServidor();
     
     // Event listeners
-    document.getElementById('vehiculoFilter').addEventListener('change', filtrarServicios);
+    document.getElementById('vehiculoFilter').addEventListener('change', filtrarViajes);
     document.getElementById('mesFilter').addEventListener('change', cambiarMes);
     document.getElementById('anioFilter').addEventListener('change', cambiarAnio);
     document.getElementById('prevMes').addEventListener('click', mesAnterior);
@@ -22,10 +21,9 @@ function cargarDatosDelServidor() {
     try {
         const scriptElement = document.getElementById('serviciosData');
         if (scriptElement) {
-            servicios = JSON.parse(scriptElement.textContent);
+            viajes = JSON.parse(scriptElement.textContent);
         }
         
-        // Actualizar el calendario después de cargar los datos
         actualizarCalendario();
         actualizarEstadisticas();
     } catch (error) {
@@ -37,12 +35,11 @@ function editarServicio(id) {
     window.location.href = `/servicios/form/${id}`;
 }
 
-function filtrarServicios() {
+function filtrarViajes() {
     vehiculoFiltro = document.getElementById('vehiculoFilter').value;
     actualizarCalendario();
     actualizarEstadisticas();
     
-    // Hacer petición al servidor para actualizar la vista
     const url = new URL(window.location);
     if (vehiculoFiltro) {
         url.searchParams.set('vehiculo', vehiculoFiltro);
@@ -117,7 +114,8 @@ function actualizarURL() {
 
 function actualizarCalendario() {
     const grid = document.querySelector('.calendar-grid');
-    const dias = grid.querySelectorAll('.day-cell');
+    // Limpiar solo los días, no los encabezados
+    const dias = Array.from(grid.querySelectorAll('.day-cell'));
     dias.forEach(dia => dia.remove());
 
     const primerDia = new Date(anioActual, mesActual, 1);
@@ -149,6 +147,7 @@ function actualizarCalendario() {
 }
 
 function crearCeldaDia(numeroDia, otroMes) {
+    const grid = document.querySelector('.calendar-grid');
     const celda = document.createElement('div');
     celda.className = `day-cell ${otroMes ? 'other-month' : ''}`;
     
@@ -159,63 +158,63 @@ function crearCeldaDia(numeroDia, otroMes) {
 
     if (!otroMes) {
         const fechaCompleta = `${anioActual}-${String(mesActual + 1).padStart(2, '0')}-${String(numeroDia).padStart(2, '0')}`;
-        const serviciosDelDia = obtenerServiciosDelDia(fechaCompleta);
+        const viajesDelDia = obtenerViajesDelDia(fechaCompleta);
         
-        serviciosDelDia.forEach(servicio => {
-            const item = crearItemServicio(servicio);
+        viajesDelDia.forEach(viaje => {
+            const item = crearItemViaje(viaje);
             celda.appendChild(item);
         });
     }
 
-    document.querySelector('.calendar-grid').appendChild(celda);
+    grid.appendChild(celda);
 }
 
-function obtenerServiciosDelDia(fecha) {
-    return servicios.filter(servicio => {
-        if (vehiculoFiltro && servicio.vehicle.placa !== vehiculoFiltro) {
+function obtenerViajesDelDia(fecha) {
+    return viajes.filter(viaje => {
+        if (vehiculoFiltro && viaje.vehiculos?.placa !== vehiculoFiltro) {
             return false;
         }
-        return servicio.fecha_servicio === fecha;
+        return viaje.fecha_servicio === fecha;
     });
 }
 
-function crearItemServicio(servicio) {
+function crearItemViaje(viaje) {
     const item = document.createElement('div');
-    item.className = `service-item ${servicio.estado}`;
-    item.onclick = () => editarServicio(servicio.id);
+    item.className = `service-item ${viaje.estado || 'programado'}`;
+    item.onclick = () => editarServicio(viaje.id);
     
     item.innerHTML = `
-        <div class="service-vehicle">${servicio.vehicle.placa}</div>
-        <div class="service-type">${servicio.tipo_servicio}</div>
-        <div class="service-cost">$${servicio.costo.toLocaleString()}</div>
+        <div class="service-vehicle">${viaje.vehiculos?.placa || 'Sin vehículo'}</div>
+        <div class="service-type">${viaje.tipo_servicio || 'Viaje'}</div>
+        <div class="service-cost">$${(viaje.costo || 0).toLocaleString()}</div>
     `;
     
     return item;
 }
 
 function actualizarEstadisticas() {
-    const serviciosFiltrados = servicios.filter(servicio => {
-        if (vehiculoFiltro && servicio.vehicle.placa !== vehiculoFiltro) {
+    const viajesFiltrados = viajes.filter(viaje => {
+        if (vehiculoFiltro && viaje.vehiculos?.placa !== vehiculoFiltro) {
             return false;
         }
         return true;
     });
 
-    const serviciosMes = serviciosFiltrados.filter(servicio => {
-        const fechaServicio = new Date(servicio.fecha_servicio);
-        return fechaServicio.getMonth() === mesActual && fechaServicio.getFullYear() === anioActual;
+    const viajesMes = viajesFiltrados.filter(viaje => {
+        const fechaViaje = new Date(viaje.fecha_servicio);
+        return fechaViaje.getMonth() === mesActual && fechaViaje.getFullYear() === anioActual;
     });
 
-    const costoTotal = serviciosMes.reduce((total, servicio) => total + servicio.costo, 0);
-    const vehiculosUnicos = new Set(serviciosFiltrados.map(s => s.vehicle.placa));
+    const costoTotal = viajesMes.reduce((total, viaje) => total + (viaje.costo || 0), 0);
+    const vehiculosUnicos = new Set(viajesFiltrados.map(v => v.vehiculos?.placa).filter(Boolean));
 
     const totalElement = document.getElementById('totalServicios');
     const mesElement = document.getElementById('serviciosMes');
     const costoElement = document.getElementById('costoTotal');
     const vehiculosElement = document.getElementById('vehiculosActivos');
 
-    if (totalElement) totalElement.textContent = serviciosFiltrados.length;
-    if (mesElement) mesElement.textContent = serviciosMes.length;
+    if (totalElement) totalElement.textContent = viajesFiltrados.length;
+    if (mesElement) mesElement.textContent = viajesMes.length;
     if (costoElement) costoElement.textContent = `$${costoTotal.toLocaleString()}`;
     if (vehiculosElement) vehiculosElement.textContent = vehiculosUnicos.size;
 }

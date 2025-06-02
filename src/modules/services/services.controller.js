@@ -7,8 +7,8 @@ import {
     getServiceById
 } from './services.service.js';
 import sequelize from '../../config/sequelize.js';
-import initModels from '../../models/init-models.cjs'; // <-- Importación correcta
-import { getAllVehicles } from '../vehicles/vehicles.service.js'; // Importa el servicio de vehículos
+import initModels from '../../models/init-models.cjs';
+import { getAllVehicles } from '../vehicles/vehicles.service.js';
 
 const models = initModels(sequelize);
 
@@ -23,9 +23,9 @@ const registerHandlebarsHelpers = () => ({
     formatNumber: function (number) {
         return number.toLocaleString();
     },
-     ifeq: function (a, b, options) {
-            return a === b ? options.fn(this) : options.inverse(this);
-        }
+    ifeq: function (a, b, options) {
+        return a === b ? options.fn(this) : options.inverse(this);
+    }
 });
 
 // Función para generar el calendario
@@ -43,23 +43,24 @@ const generarCalendario = (mes, anio, servicios) => {
         dias.push({
             numero: ultimoDiaMesAnterior - i,
             otroMes: true,
-            servicios: []
+            viajes: []
         });
     }
 
     // Días del mes actual
     for (let dia = 1; dia <= diasEnMes; dia++) {
         const fechaCompleta = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-        const serviciosDelDia = servicios.filter(s => s.fecha_servicio === fechaCompleta)
-            .map(servicio => ({
-                ...servicio,
-                costoFormateado: servicio.costo.toLocaleString()
+        const viajesDelDia = servicios.filter(s => s.fecha_servicio === fechaCompleta)
+            .map(viaje => ({
+                ...viaje,
+                costoFormateado: viaje.costo.toLocaleString(),
+                vehiculo: viaje.vehiculos || {}
             }));
 
         dias.push({
             numero: dia,
             otroMes: false,
-            servicios: serviciosDelDia
+            viajes: viajesDelDia
         });
     }
 
@@ -69,7 +70,7 @@ const generarCalendario = (mes, anio, servicios) => {
         dias.push({
             numero: dia,
             otroMes: true,
-            servicios: []
+            viajes: []
         });
     }
 
@@ -95,7 +96,7 @@ const listarServicios = async (req, res) => {
         const vehiculosUnicos = [...new Set(servicios.map(s => s.vehiculos?.placa))]
             .filter(Boolean)
             .map(placa => {
-                const vehiculo = servicios.find(s => s.vehiculos && s.vehiculos.placa === placa)?.vehiculos?.toJSON?.() || {};
+                const vehiculo = servicios.find(s => s.vehiculos && s.vehiculos.placa === placa)?.vehiculos || {};
                 return {
                     ...vehiculo,
                     selected: placa === vehiculoFiltro
@@ -140,7 +141,7 @@ const listarServicios = async (req, res) => {
             anioActual,
             mesNombre: meses[mesActual],
             aniosDisponibles,
-            serviciosJSON: JSON.stringify(servicios) // Para pasar al cliente
+            serviciosJSON: JSON.stringify(servicios)
         };
 
         res.render('services/list', datosVista);
