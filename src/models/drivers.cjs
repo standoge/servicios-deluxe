@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       unique: "drivers_name_key"
     },
-    birthdate: {
+    start_date: {
       type: DataTypes.DATEONLY,
       allowNull: false
     },
@@ -24,6 +24,22 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: "drivers_phone_key"
+    },
+    lastname: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    dui: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    license: {
+      type: DataTypes.STRING(15),
+      allowNull: true
+    },
+    comment: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

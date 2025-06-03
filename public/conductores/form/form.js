@@ -122,19 +122,6 @@ function goBack() {
     window.location.href = '/conductores';
 }
 
-// Formato DUI: 12345678-9
-function formatDUI(value) {
-    return value
-        .replace(/\D/g, '')
-        .replace(/^(\d{8})(\d{1})$/, '$1-$2')
-        .substring(0, 10);
-}
 
-// Formato teléfono: 1234-5678
-function formatPhone(value) {
-    return value
-        .replace(/\D/g, '')
-        .replace(/^(\d{4})(\d{1,4})$/, '$1-$2')
-        .substring(0, 9);
-}
+
 

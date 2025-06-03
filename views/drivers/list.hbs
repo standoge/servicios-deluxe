@@ -1,44 +1,74 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Listado de Conductores</title>
-    <link rel="stylesheet" href="/conductores/list/list.css" />
-</head>
-<body>
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1.5rem;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .table th, .table td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+    .table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #343a40;
+    }
+    .table tr:hover {
+        background: #e3f2fd;
+        transition: background 0.2s;
+    }
+    .btn {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+        background: #007bff;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
+    }
+    .btn-success {
+        background: #28a745;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+    .btn-primary {
+        background: #007bff;
+    }
+    .btn-warning {
+        background: #ffc107;
+        color: #343a40;
+    }
+    .btn-danger {
+        background: #dc3545;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+</style>
+    {{> navbar }}
     <div class="container">
         <div class="header">
             <h1>🧑‍✈️ Conductores Registrados</h1>
             <p>Gestión de personal conductor</p>
         </div>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="totalConductores">{{estadisticas.totalConductores}}</div>
-                <div class="stat-label">Total Conductores</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="activos">{{estadisticas.activos}}</div>
-                <div class="stat-label">Activos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="inactivos">{{estadisticas.inactivos}}</div>
-                <div class="stat-label">Inactivos</div>
-            </div>
-        </div>
-
         <div class="controls">
-            <div class="filter-group">
-                <label for="estadoFilter">Filtrar por Estado:</label>
-                <select id="estadoFilter">
-                    <option value="">Todos</option>
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <a href="http://localhost:3000/conductores/nuevo/" class="btn btn-success" target="_blank" rel="noopener noreferrer">
+                <a href="http://localhost:3000/conductores/form/add" class="btn btn-success">
     ➕ Nuevo Conductor
 </a>
 
@@ -49,21 +79,30 @@
             <table id="conductoresTable" class="table">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0)">Nombre <span>▲▼</span></th>
-                        <th onclick="sortTable(1)">Apellido <span>▲▼</span></th>
-                        <th onclick="sortTable(2)">DUI <span>▲▼</span></th>
-                        <th onclick="sortTable(3)">Licencia <span>▲▼</span></th>
-                        <th onclick="sortTable(4)">Estado <span>▲▼</span></th>
+                        <th onclick="sortTable(0)">Licencia </th>
+                        <th onclick="sortTable(1)">Nombre </th>
+                        <th onclick="sortTable(2)">Apellido </th>
+                        <th onclick="sortTable(3)">DUI </th>
+                        <th onclick="sortTable(4)">Activo </th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each conductores}}
-                    <tr onclick="verConductor({{this.id}})" style="cursor:pointer;">
-                        <td>{{this.nombre}}</td>
-                        <td>{{this.apellido}}</td>
+                    <tr onclick="verConductor({{this.driver_id}})" style="cursor:pointer;">
+                        <td>{{this.driver_id}}</td>
+                        <td>{{this.name}}</td>
+                        <td>{{this.lastname}}</td>
                         <td>{{this.dui}}</td>
-                        <td>{{this.licencia}}</td>
-                        <td>{{this.estado}}</td>
+                        <td>{{this.active}}</td>
+                        <td>
+                            <a href="/conductores/form/{{this.driver_id}}" class="btn btn-primary" title="Editar">
+                                <span aria-hidden="true">&#9998;</span> Editar
+                            </a>
+                            <button type="button" class="btn btn-danger btn-delete-driver" data-id="{{this.driver_id}}" title="Eliminar">
+                                <span aria-hidden="true">&#128465;</span> Desactivar
+                            </button>
+                        </td>
                     </tr>
                     {{/each}}
                 </tbody>
@@ -124,7 +163,7 @@
 
             // Función para ver detalle del conductor
             function verConductor(id) {
-                window.location.href = `/conductores/form/edit/${id}`;
+                window.location.href = `/conductores/form/${id}`;
             }
 
             // Agregar listener para filtrar tabla por estado
@@ -150,8 +189,7 @@
     </script>
 
     <script src="/conductores/list/list.js"></script>
-</body>
-</html>
+
 
 
 
