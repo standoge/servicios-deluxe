@@ -49,16 +49,20 @@
             <table id="conductoresTable" class="table">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0)">Nombre <span>▲▼</span></th>
-                        <th onclick="sortTable(1)">Licencia <span>▲▼</span></th>
-                        <th onclick="sortTable(2)">Activo <span>▲▼</span></th>
+                        <th onclick="sortTable(0)">Licencia <span>▲▼</span></th>
+                        <th onclick="sortTable(1)">Nombre <span>▲▼</span></th>
+                        <th onclick="sortTable(2)">Apellido <span>▲▼</span></th>
+                        <th onclick="sortTable(3)">DUI <span>▲▼</span></th>
+                        <th onclick="sortTable(4)">Activo <span>▲▼</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each conductores}}
                     <tr onclick="verConductor({{this.id}})" style="cursor:pointer;">
-                        <td>{{this.name}}</td>
                         <td>{{this.driver_id}}</td>
+                        <td>{{this.name}}</td>
+                        <td>{{this.lastname}}</td>
+                        <td>{{this.dui}}</td>
                         <td>{{this.active}}</td>
                     </tr>
                     {{/each}}

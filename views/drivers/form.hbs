@@ -11,7 +11,7 @@
 
 		<div class="header">
 			<h1>{{titulo}}</h1>
-			<p>Complete todos los campos para {{#if conductor.id}}actualizar{{else}}registrar{{/if}} el conductor.</p>
+			<p>Complete todos los campos para {{#if conductor.driver_id}}actualizar{{else}}registrar{{/if}} el conductor.</p>
 		</div>
 
 		<form id="conductorForm" action="{{accion}}" method="POST" class="form-container">
@@ -21,37 +21,37 @@
 				<div class="form-grid">
 
 					<div class="form-group">
-						<label for="nombre" class="required">Nombres</label>
-						<input type="text" id="nombre" name="nombre" value="{{conductor.nombre}}" required />
+						<label for="name" class="required">Nombres</label>
+						<input type="text" id="nombre" name="name" value="{{conductor.name}}" required />
 					</div>
 
 					<div class="form-group">
-						<label for="apellido" class="required">Apellidos</label>
-						<input type="text" id="apellido" name="apellido" value="{{conductor.apellido}}" required />
+						<label for="lastname" class="required">Apellidos</label>
+						<input type="text" id="apellido" name="lastname" value="{{conductor.lastname}}" required />
 					</div>
 
 					<div class="form-group">
 						<label for="dui" class="required">DUI</label>
-						<input type="text" id="dui" name="dui" value="{{conductor.dui}}" placeholder="00000000-0" required />
+						<input type="text" id="dui" name="dui" value="{{conductor.dui}}" placeholder="000000000" required />
 					</div>
 
 					<div class="form-group">
-						<label for="telefono">Teléfono</label>
-						<input type="text" id="telefono" name="telefono" value="{{conductor.telefono}}" placeholder="0000-0000" />
+						<label for="phone">Teléfono</label>
+						<input type="text" id="telefono" name="phone" value="{{conductor.phone}}" placeholder="00000000" />
 					</div>
 
 					<div class="form-group">
-						<label for="licencia" class="required">No. de Licencia</label>
-						<input type="text" id="licencia" name="licencia" value="{{conductor.licencia}}" required />
+						<label for="driver_id" class="required">No. de Licencia</label>
+						<input type="text" id="licencia" name="driver_id" value="{{conductor.driver_id}}" required {{#if conductor.driver_id}} disabled {{/if}}/>
 					</div>
 
 					<div class="form-group">
-						<label for="tipoLicencia" class="required">Tipo de Licencia</label>
-						<select id="tipoLicencia" name="tipoLicencia" required>
+						<label for="license" class="required">Tipo de Licencia</label>
+						<select id="tipoLicencia" name="license" required>
 							<option value="">Seleccione tipo</option>
-							<option value="Liviana" {{#if (eq conductor.tipoLicencia "Liviana")}}selected{{/if}}>Liviana</option>
-							<option value="Pesada" {{#if (eq conductor.tipoLicencia "Pesada")}}selected{{/if}}>Pesada</option>
-							<option value="Motocicleta" {{#if (eq conductor.tipoLicencia "Motocicleta")}}selected{{/if}}>Motocicleta</option>
+							<option value="Liviana" {{#if (eq conductor.license "Liviana")}}selected{{/if}}>Liviana</option>
+							<option value="Pesada" {{#if (eq conductor.license "Pesada")}}selected{{/if}}>Pesada</option>
+							<option value="Motocicleta" {{#if (eq conductor.license "Motocicleta")}}selected{{/if}}>Motocicleta</option>
 						</select>
 					</div>
 
@@ -63,21 +63,21 @@
 				<div class="form-grid">
 
 					<div class="form-group">
-						<label for="fechaContratacion" class="required">Fecha de Contratación</label>
-						<input type="date" id="fechaContratacion" name="fechaContratacion" value="{{conductor.fechaContratacion}}" required />
+						<label for="start_date" class="required">Fecha de Contratación</label>
+						<input type="date" id="fechaContratacion" name="start_date" value="{{conductor.start_date}}" required />
 					</div>
 
 					<div class="form-group">
-						<label for="estado">Estado</label>
-						<select id="estado" name="estado">
-							<option value="activo" {{#if (eq conductor.estado "activo")}}selected{{/if}}>Activo</option>
-							<option value="inactivo" {{#if (eq conductor.estado "inactivo")}}selected{{/if}}>Inactivo</option>
+						<label for="active">Estado</label>
+						<select id="estado" name="active">
+							<option value="true" {{#if (eq conductor.active "true")}}selected{{/if}}>Activo</option>
+							<option value="false" {{#if (eq conductor.active "false")}}selected{{/if}}>Inactivo</option>
 						</select>
 					</div>
 
 					<div class="form-group form-full">
-						<label for="observaciones">Observaciones</label>
-						<textarea id="observaciones" name="observaciones" rows="3">{{conductor.observaciones}}</textarea>
+						<label for="comment">Observaciones</label>
+						<textarea id="observaciones" name="comment" rows="3">{{conductor.comment}}</textarea>
 					</div>
 
 				</div>
