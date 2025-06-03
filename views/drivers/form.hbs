@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="/conductores/form/form.css" />
 </head>
 <body>
+	    {{> navbar }}
 	<div class="container">
 
 		<div class="header">
@@ -100,7 +101,7 @@
 					const goBackBtn = document.getElementById('goBackToList');
 					if (goBackBtn) {
 						goBackBtn.addEventListener('click', function () {
-							window.location.href = 'http://localhost:3000/conductores/list/';
+							window.location.href = '/conductores/list/';
 						});
 					}
 				});
