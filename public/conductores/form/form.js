@@ -119,7 +119,7 @@ function closeConfirmModal() {
 
 // Volver al listado
 function goBack() {
-    window.location.href = '/conductores';
+    window.location.href = '/conductores/list';
 }
 
 
